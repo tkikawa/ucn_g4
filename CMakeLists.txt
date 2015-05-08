@@ -22,17 +22,17 @@ include(${Geant4_USE_FILE})
 
 # ASSIMP
 find_package(assimp)
-include_directories(/home/kikawa/tmp/assimp-3.1.1/install/include)
-link_directories(/home/kikawa/tmp/assimp-3.1.1/install/lib)
+include_directories(/usr/local/assimp/include)
+link_directories(/usr/local/assimp/lib)
 
 # CADMesh
 find_package(cadmesh)
-include_directories(/home/kikawa/tmp/CADMesh-0.9/install/include)
-link_directories(/home/kikawa/tmp/CADMesh-0.9/install/lib)
+include_directories(/usr/local/cadmesh/include)
+link_directories(/usr/local/cadmesh/lib)
 
 # muparser
-include_directories(/home/kikawa/tmp/muparser_v2_2_4/install/include)
-link_directories(/home/kikawa/tmp/muparser_v2_2_4/install/lib)
+include_directories(/usr/local/muparser/include)
+link_directories(/usr/local/muparser/lib)
 
 # alglib
 file(GLOB alglib_sources ${PROJECT_SOURCE_DIR}/alglib-3.9.0/cpp/src/*.cpp)
@@ -59,7 +59,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 add_executable(UCNsim UCNsim.cc ${sources} ${headers} ${alglib_sources} ${alglib_headers} ${libtricubic_sources} ${libtricubic_headers})
 target_link_libraries(UCNsim ${Geant4_LIBRARIES})
 target_link_libraries(UCNsim ${cadmesh_LIBRARIES})
-target_link_libraries(UCNsim /home/kikawa/tmp/muparser_v2_2_4/install/lib/libmuparser.so)
+target_link_libraries(UCNsim /usr/local/muparser/lib/libmuparser.so)
 
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
