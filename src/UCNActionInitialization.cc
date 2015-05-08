@@ -6,9 +6,11 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-UCNActionInitialization::UCNActionInitialization(TConfig CONFIN, TConfig GEOMIN, TConfig PARTIN)
+UCNActionInitialization::UCNActionInitialization(int JOBNUM, std::string OUTPATH, TConfig CONFIN, TConfig GEOMIN, TConfig PARTIN)
  : G4VUserActionInitialization()
 {
+  jobnumber=JOBNUM;
+  outpath=OUTPATH;
 
   simtype=1;
   ConfigInit(CONFIN);
@@ -18,6 +20,10 @@ UCNActionInitialization::UCNActionInitialization(TConfig CONFIN, TConfig GEOMIN,
   }
   particlein=PARTIN;
   geometryin=GEOMIN;
+
+  std::istringstream sourceconf(geometryin["SOURCE"].begin()->second);
+  sourceconf >> ParticleName;
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -30,8 +36,8 @@ UCNActionInitialization::~UCNActionInitialization()
 void UCNActionInitialization::BuildForMaster() const
 {
   SetUserAction(new UCNRunAction());
-  SetUserAction(new UCNSteppingAction());
-  SetUserAction(new UCNTrackingAction());
+  SetUserAction(new UCNSteppingAction(jobnumber, outpath, ParticleName));
+  SetUserAction(new UCNTrackingAction(jobnumber, outpath, ParticleName));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -42,8 +48,8 @@ void UCNActionInitialization::Build() const
   //SetUserAction(new UCNPrimaryGeneratorAction());
 
   SetUserAction(new UCNRunAction());
-  SetUserAction(new UCNSteppingAction());
-  SetUserAction(new UCNTrackingAction());
+  SetUserAction(new UCNSteppingAction(jobnumber, outpath, ParticleName));
+  SetUserAction(new UCNTrackingAction(jobnumber, outpath, ParticleName));
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -70,4 +76,3 @@ void UCNActionInitialization::ConfigInit(TConfig config){
 					      >> BCutPlanePoint[6] >> BCutPlanePoint[7] >> BCutPlanePoint[8]
 					      >> BCutPlaneSampleCount1 >> BCutPlaneSampleCount2;
 }
-

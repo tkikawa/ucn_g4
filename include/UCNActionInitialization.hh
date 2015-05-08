@@ -10,8 +10,13 @@
 class UCNActionInitialization : public G4VUserActionInitialization
 {
 public:
+  int jobnumber;
+  std::string outpath;
+
   TConfig particlein;
   TConfig geometryin;
+
+  std::string ParticleName;
 
   double SimTime; ///< max. simulation time
   int neutdist;
@@ -24,7 +29,7 @@ public:
 
 
 
-  UCNActionInitialization(TConfig CONFMIN, TConfig GEOMIN, TConfig PARIN);
+  UCNActionInitialization(int JOBNUM, std::string OUTPATH, TConfig CONFMIN, TConfig GEOMIN, TConfig PARIN);
   virtual ~UCNActionInitialization();
   
   virtual void BuildForMaster() const;

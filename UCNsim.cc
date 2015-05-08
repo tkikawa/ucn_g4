@@ -1,3 +1,9 @@
+/********************************************/
+/*                                          */
+/*  GEANT4 simulation code for TRIUMF UCN   */
+/*                                          */
+/********************************************/
+
 #include <cstdlib>
 #include <cstdio>
 #include <csignal>
@@ -145,7 +151,7 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(new UCNPhysicsList());
   G4cout << "PhysicsList init. OK!" << G4endl;
   // User action initialization
-  runManager->SetUserInitialization(new UCNActionInitialization(configin,geometryin,particlein));
+  runManager->SetUserInitialization(new UCNActionInitialization(jobnumber,outpath,configin,geometryin,particlein));
   G4cout << "Action init. OK!" << G4endl;
 
   // Initialize G4 kernel
