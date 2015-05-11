@@ -94,8 +94,8 @@ For the installtion, [cmake](http://www.cmake.org/) is used. The cmake version n
 ------------------
 
 ### Usage
-- UCNsim [jobnumber] [path/to/in/files] [path/to/out/files] (options)
-- Default settings: [jobnumber]=0, [path/to/in/files]="./in", [path/to/out/files]="./out"
+- UCNsim {jobnumber} {path/to/in/files} {path/to/out/files} [options]
+- Default settings: jobnumber=0, path/to/in/files="./in", path/to/out/files="./out"
 
 ### Options
 - -m : set the macro
