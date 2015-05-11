@@ -72,34 +72,133 @@ UCNDetectorConstruction::~UCNDetectorConstruction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void UCNDetectorConstruction::DefineMaterials()
-{
+
+void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
+
   G4NistManager* nistMan = G4NistManager::Instance();
 
+  if(name=="H"||name=="He"||name=="Li"||name=="Be"||name=="B"||
+     name=="C"||name=="N"||name=="O"||name=="F"||name=="Ne"||
+     name=="Na"||name=="Mg"||name=="Al"||name=="Si"||name=="P"||
+     name=="S"||name=="Cl"||name=="Ar"||name=="K"||name=="Ca"||
+     name=="Sc"||name=="Ti"||name=="V"||name=="Cr"||name=="Mn"||
+     name=="Fe"||name=="Co"||name=="Ni"||name=="Cu"||name=="Zn"||
+     name=="Ga"||name=="Ge"||name=="As"||name=="Se"||name=="Br"||
+     name=="Kr"||name=="Rb"||name=="Sr"||name=="Y"||name=="Zr"||
+     name=="Nb"||name=="Mo"||name=="Tc"||name=="Ru"||name=="Rh"||
+     name=="Pd"||name=="Ag"||name=="Cd"||name=="In"||name=="Sn"||
+     name=="Sb"||name=="Te"||name=="I"||name=="Xe"||name=="Cs"||
+     name=="Ba"||name=="La"||name=="Ce"||name=="Pr"||name=="Nd"||
+     name=="Pm"||name=="Sm"||name=="Eu"||name=="Gd"||name=="Tb"||
+     name=="Dy"||name=="Ho"||name=="Er"||name=="Tm"||name=="Yb"||
+     name=="Lu"||name=="Hf"||name=="Ta"||name=="W"|| name=="Re"||
+     name=="Os"||name=="Ir"||name=="Pt"||name=="Au"||name=="Hg"||
+     name=="Tl"||name=="Pb"||name=="Bi"||name=="Po"||name=="At"||
+     name=="Rn"||name=="Fr"||name=="Ra"||name=="Ac"||name=="Th"||
+     name=="Pa"||name=="U"||name=="Np"||name=="Pu"||name=="Am"||
+     name=="Cm"||name=="Bk"||name=="Cf"){
+    char g4_name[20]="G4_";
+    strcat(g4_name,name.c_str());
+    //std::cout<<g4_name<<std::endl;
+    ucn_material[imat] = nistMan->FindOrBuildMaterial(g4_name);
+    return;
+  }
+  else if(name=="PolishedSteel"){
+    ucn_material[imat] = nistMan->FindOrBuildMaterial("G4_STAINLESS-STEEL");
+    return;
+  }
+  else if(name=="PE"){
+    ucn_material[imat] = nistMan->FindOrBuildMaterial("G4_POLYETHYLENE");
+    return;
+  }
+  else if(name=="DLC"){
+    ucn_material[imat] = new G4Material("DLC", 6, 12.0107*g/mole, 2.8*g/cm3);
+    return;
+  }
+  else if(name=="DLCLT"){
+    ucn_material[imat] = new G4Material("DLCLT", 6, 12.0107*g/mole, 2.8*g/cm3);
+    return;
+  }
+  else if(name=="UCNdet"){
+    ucn_material[imat] = new G4Material("UCNdet", 2.5*g/cm3, 2);
+    G4Element* elSi = nistMan->FindOrBuildElement("Si");
+    G4Element* elO = nistMan->FindOrBuildElement("O");
+    ucn_material[imat] -> AddElement(elSi,1);
+    ucn_material[imat] -> AddElement(elO,1);
+    return;
+  }
+  else if(name=="NiPLT"){
+    ucn_material[imat] = new G4Material("NiPLT", 7.8*g/cm3, 2);
+    G4Element* elNi = nistMan->FindOrBuildElement("Ni");
+    G4Element* elP = nistMan->FindOrBuildElement("P");
+    ucn_material[imat] -> AddElement(elNi,1);
+    ucn_material[imat] -> AddElement(elP,1);
+    return;
+  }
+  else if(name=="NiMo"){
+    ucn_material[imat] = new G4Material("NiMo", 9.05*g/cm3, 2);
+    G4Element* elNi = nistMan->FindOrBuildElement("Ni");
+    G4Element* elMo = nistMan->FindOrBuildElement("Mo");
+    ucn_material[imat] -> AddElement(elNi,1);
+    ucn_material[imat] -> AddElement(elMo,1);
+    return;
+  }
+  else if(name=="CuBe"){
+    ucn_material[imat] = new G4Material("CuBe", 8.36*g/cm3, 2);
+    G4Element* elCu = nistMan->FindOrBuildElement("Cu");
+    G4Element* elBe = nistMan->FindOrBuildElement("Be");
+    ucn_material[imat] -> AddElement(elCu,1);
+    ucn_material[imat] -> AddElement(elBe,1);
+    return;
+  }
+  else if(name=="LHe"){
+    ucn_material[imat] = new G4Material("LHe", 2, 4.0026*g/mole, 0.1248*g/cm3);
+    return;
+  }
+  else if(name=="LHePerf"){
+    ucn_material[imat] = new G4Material("LHePerf", 2, 4.0026*g/mole, 0.1248*g/cm3);
+    return;
+  }
+  else if(name=="BeO"){
+    ucn_material[imat] = new G4Material("BeO", 3.01*g/cm3, 2);
+    G4Element* elBe = nistMan->FindOrBuildElement("Be");
+    G4Element* elO = nistMan->FindOrBuildElement("O");
+    ucn_material[imat] -> AddElement(elBe,1);
+    ucn_material[imat] -> AddElement(elO,1);
+    return;
+  }
+  else if(name=="SS"){
+    //ucn_material[imat] = new G4Material("SS", 8*g/cm3);
+    ucn_material[imat] = nistMan->FindOrBuildMaterial("G4_STAINLESS-STEEL");
+    return;
+  }
+  else if(name=="dPE"){
+    ucn_material[imat] = new G4Material("dPE", 1.071*g/cm3, 2);
+    G4Element* elC = nistMan->FindOrBuildElement("C");
+    G4Element* elD = new G4Element("Deuterium", "D", 1., 2.014*g/mole);
+    ucn_material[imat] -> AddElement(elC,2);
+    ucn_material[imat] -> AddElement(elD,4);
+    return;
+  }
+  else if(name=="dPS"){
+    ucn_material[imat] = new G4Material("dPS", 1.146*g/cm3, 2);
+    G4Element* elC = nistMan->FindOrBuildElement("C");
+    G4Element* elD = new G4Element("Deuterium", "D", 1., 2.014*g/mole);
+    ucn_material[imat] -> AddElement(elC,8);
+    ucn_material[imat] -> AddElement(elD,8);
+    return;
+  }
+  else{
+    std::cout<<"G4Material corresponding to "<<name.c_str()<<" is not defined in UCNDetectorConstruction.cc"<<std::endl;
+    exit(-1);
+  }
+}
+
+void UCNDetectorConstruction::DefineMaterials()
+{
+
+  G4NistManager* nistMan = G4NistManager::Instance(); 
   fVacuum = nistMan->FindOrBuildMaterial("G4_Galactic");
-
-  // --- Ni diffuse 10%
-  /*
-  G4UCNMaterialPropertiesTable* MPT = new G4UCNMaterialPropertiesTable();
-  MPT->AddConstProperty("REFLECTIVITY",1.);
-  MPT->AddConstProperty("DIFFUSION",0.1);
-  MPT->AddConstProperty("FERMIPOT",252.0); // Gollub, Table 2.1 in neV
-  MPT->AddConstProperty("SPINFLIP",0.);
-  MPT->AddConstProperty("LOSS", 12.5e-5); //  Gollub, Table 2.1
-  MPT->AddConstProperty("LOSSCS",0.);
-  MPT->AddConstProperty("ABSCS",4.49); // 1/v loss cross-section  at room temp.
-  MPT->AddConstProperty("SCATCS",18.5); // (incoherent) "elastic" scattering cs
-  G4double neV = 1.e-9*eV;
-  MPT->SetMicroRoughnessParameters(30*nm, 1*nm,
-                                   180, 1000,
-                                   0*degree, 90*degree,
-                                   1*neV, 1000*neV,
-                                   15, 15,
-                                   0.01*degree);
-
-  fGuideMaterial->SetMaterialPropertiesTable(MPT);
-  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
-  */
 
   int imat=0;
   double FermiReal; ///< Real part of Fermi potential
@@ -115,7 +214,8 @@ void UCNDetectorConstruction::DefineMaterials()
     ss >> FermiReal >> FermiImag >> DiffProb >> SpinflipProb >> RMSRoughness >> CorrelLength >> UseMRModel;
 
     if (ss){
-      ucn_material[imat] = (G4Material*) nistMan->FindOrBuildMaterial(material_name);
+      std::cout<<"Material setting for "<<material_name.c_str()<<"..."<<std::flush;
+      GetMaterial(imat, material_name);
       mattbl[imat] = new G4UCNMaterialPropertiesTable();
       mattbl[imat]->AddConstProperty("FERMIPOT",FermiReal);
       mattbl[imat]->AddConstProperty("LOSS",FermiImag/FermiReal);
@@ -123,9 +223,6 @@ void UCNDetectorConstruction::DefineMaterials()
       mattbl[imat]->AddConstProperty("SPINFLIP",SpinflipProb);
       mattbl[imat]->AddConstProperty("MR_RRMS", RMSRoughness*nm);
       mattbl[imat]->AddConstProperty("MR_CORRLEN", CorrelLength*nm);
-      //mattbl[imat]->AddConstProperty("",RMSRoughness);
-      //mattbl[imat]->AddConstProperty("",CorrelLength);
-      //mattbl[imat]->AddConstProperty("",UseMRModel);
       G4double neV = 1.e-9*eV;
       mattbl[imat]->SetMicroRoughnessParameters(CorrelLength*nm,
 						RMSRoughness*nm,
@@ -137,7 +234,7 @@ void UCNDetectorConstruction::DefineMaterials()
       ucn_material[imat]->SetMaterialPropertiesTable(mattbl[imat]);
       materials.push_back(material_name);
       imat++;
-
+      std::cout<<"done."<<std::endl;
     }
     else
       std::cout << "Could not load material " << i->first << '\n';

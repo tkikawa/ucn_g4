@@ -64,6 +64,7 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
   
 private:
  
+  void GetMaterial(int imat, std::string name);
   void DefineMaterials();
   void ReadInField(TConfig conf);
 
