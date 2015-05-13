@@ -12,6 +12,7 @@ class UCNSteppingAction : public G4UserSteppingAction
 
   std::ofstream trackfile;
 
+  int secondaries;
   int jobnumber;
 
   int particle, polarisation;
@@ -20,7 +21,7 @@ class UCNSteppingAction : public G4UserSteppingAction
   double B[4][4], Ei[3], V;
 
 
-  UCNSteppingAction(int JOBNUM, std::string OUTPATH, std::string NAME);
+  UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON, std::string NAME);
     virtual ~UCNSteppingAction();
 
     virtual void UserSteppingAction(const G4Step*);

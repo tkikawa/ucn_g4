@@ -36,8 +36,8 @@ UCNActionInitialization::~UCNActionInitialization()
 void UCNActionInitialization::BuildForMaster() const
 {
   SetUserAction(new UCNRunAction());
-  SetUserAction(new UCNSteppingAction(jobnumber, outpath, ParticleName));
-  SetUserAction(new UCNTrackingAction(jobnumber, outpath, ParticleName));
+  SetUserAction(new UCNSteppingAction(jobnumber, outpath, secondaries, ParticleName));
+  SetUserAction(new UCNTrackingAction(jobnumber, outpath, secondaries, ParticleName));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -48,8 +48,8 @@ void UCNActionInitialization::Build() const
   //SetUserAction(new UCNPrimaryGeneratorAction());
 
   SetUserAction(new UCNRunAction());
-  SetUserAction(new UCNSteppingAction(jobnumber, outpath, ParticleName));
-  SetUserAction(new UCNTrackingAction(jobnumber, outpath, ParticleName));
+  SetUserAction(new UCNSteppingAction(jobnumber, outpath, secondaries, ParticleName));
+  SetUserAction(new UCNTrackingAction(jobnumber, outpath, secondaries, ParticleName));
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

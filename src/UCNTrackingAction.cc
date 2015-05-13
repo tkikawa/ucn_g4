@@ -6,8 +6,10 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-UCNTrackingAction::UCNTrackingAction(int JOBNUM, std::string OUTPATH, std::string NAME)
+UCNTrackingAction::UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON, std::string NAME)
 {
+
+  secondaries=SECON;
   jobnumber=JOBNUM;
   std::string filesuffix = "end.out";
   std::string outpath = OUTPATH;
@@ -47,10 +49,12 @@ UCNTrackingAction::~UCNTrackingAction()
 void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
   // Create trajectory only for primaries
-  if(aTrack->GetParentID()==0)
-  { fpTrackingManager->SetStoreTrajectory(true); }
-  else
-  { fpTrackingManager->SetStoreTrajectory(false); }
+  //if(aTrack->GetParentID()==0)
+  //{ fpTrackingManager->SetStoreTrajectory(true); }
+  //else
+  //{ fpTrackingManager->SetStoreTrajectory(false); }
+
+  if(aTrack->GetParentID()!=0&&!secondaries) { return; }
 
   particle=0;
   tstart = aTrack->GetGlobalTime()/s;
@@ -65,13 +69,14 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   Hstart = aTrack->GetTotalEnergy()/eV;
   Estart = aTrack->GetKineticEnergy()/eV;
 
-
-
 }
 
 
 void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 {
+
+  if(aTrack->GetParentID()!=0&&!secondaries) { return; }
+
   tend = aTrack->GetGlobalTime()/s;
   xend = (aTrack->GetPosition()/m)[0];
   yend = (aTrack->GetPosition()/m)[1];
@@ -83,19 +88,19 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   else                                 polend=-1;
   Hend = aTrack->GetTotalEnergy()/eV;
   Eend = aTrack->GetKineticEnergy()/eV;
-
+  
   stopID=0;
   NSpinflip=0;
   spinflipprob=0;
   ComputingTime=0;
   Nhit=0;
-
+  
   Nstep      = aTrack->GetCurrentStepNumber();
   trajlength = aTrack->GetTrackLength()/m;
-
+  
   Hmax=0;
-
-
+  
+    
   file    << jobnumber << " " << particle << " "
 	  << tstart << " " << xstart << " " << ystart << " " << zstart << " "
 	  << vxstart << " " << vystart << " " << vzstart << " "
@@ -104,6 +109,6 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
 	  << vxend << " " << vyend << " " << vzend << " "
 	  << polend << " " << Hend << " " << Eend << " " << stopID << " " << NSpinflip << " " << spinflipprob << " "
 	  << ComputingTime << " " << Nhit << " " << Nstep << " " << trajlength << " " << Hmax << '\n';
-
+  
 
 }

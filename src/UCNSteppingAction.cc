@@ -10,8 +10,10 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
 
-UCNSteppingAction::UCNSteppingAction(int JOBNUM, std::string OUTPATH, std::string NAME)
+UCNSteppingAction::UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON, std::string NAME)
 {
+  secondaries=SECON;
+
   jobnumber=JOBNUM;
   std::string filesuffix = "track.out";
   std::string outpath = OUTPATH;
@@ -41,13 +43,14 @@ UCNSteppingAction::~UCNSteppingAction()
 
 void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
 {
+
   G4Track * theTrack = theStep->GetTrack();
 
   // check if it is alive
   if(theTrack->GetTrackStatus()!=fAlive) { return; }
 
   // check if it is primary
-  if(theTrack->GetParentID()!=0) { return; }
+  if(theTrack->GetParentID()!=0&&!secondaries) { return; }
 
   particle=0;
   t = theTrack->GetGlobalTime()/s;

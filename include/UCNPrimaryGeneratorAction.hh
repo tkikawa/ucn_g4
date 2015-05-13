@@ -8,6 +8,13 @@
 
 #include "muParser.h"
 
+
+// Open Asset Importer Library //
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
+
 class G4Event;
 class G4ParticleGun;
 
@@ -28,15 +35,17 @@ public:
   int polarization;
   double t;
   double px, py, pz;
-  double X ,Y, Z;
+  G4double X ,Y, Z;
 
   double particleEnergy;
   double theta, phi;
 
+  G4double X_min, X_max, Y_min, Y_max, Z_min, Z_max;
+  G4double topsurf, insurf, outsurf, totsurf;
 
   std::string sourcemode;
   double x_min, x_max, y_min, y_max, z_min, z_max;
-  double r_min, r_max, phi_min, phi_max;//, z_min, z_max;
+  double r_min, r_max, phi_min, phi_max;
   double E_normal;
   double ActiveTime;
   bool PhaseSpaceWeighting;
@@ -83,6 +92,15 @@ private:
   int    DicePolarisation(const std::string &particlename);
   void   RandomPointInSourceVolume();
 
+
+  Assimp::Importer importer;
+  const aiScene* scene;
+  aiMesh* m;
+  void Compare(G4double &A_max, G4double &A_min, G4double *A_tmp);
+  bool InSolid(G4double x1, G4double y1, G4double z1, G4double z1_min);
+  bool Collision(G4double *X_tmp, G4double *Y_tmp, G4double *Z_tmp, G4double x1, G4double y1, G4double z1, G4double z1_min);
+  G4double CalcSurf(G4double *X_tmp, G4double *Y_tmp, G4double *Z_tmp);
+  void SetSurfPoint(G4double *X_tmp, G4double *Y_tmp, G4double *Z_tmp);
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

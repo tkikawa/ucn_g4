@@ -27,10 +27,10 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 
-#include "G4GeometryManager.hh"
-#include "G4PhysicalVolumeStore.hh"
-#include "G4LogicalVolumeStore.hh"
-#include "G4SolidStore.hh"
+//#include "G4GeometryManager.hh"
+//#include "G4PhysicalVolumeStore.hh"
+//#include "G4LogicalVolumeStore.hh"
+//#include "G4SolidStore.hh"
 
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
@@ -213,6 +213,7 @@ void UCNDetectorConstruction::DefineMaterials()
     std::istringstream ss(i->second);
     ss >> FermiReal >> FermiImag >> DiffProb >> SpinflipProb >> RMSRoughness >> CorrelLength >> UseMRModel;
 
+    if (material_name=="default"||material_name=="Default")continue;
     if (ss){
       std::cout<<"Material setting for "<<material_name.c_str()<<"..."<<std::flush;
       GetMaterial(imat, material_name);
@@ -310,6 +311,8 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
     ss >> STLfile >> matname;
     if (ss){
       for (unsigned j = 0; j < materials.size(); j++){
+	if (STLfile == "igunored" ||STLfile == "Igunored")break;
+	if (matname == "default" ||matname == "Default")break;
 	if (matname == materials[j]){
 	  //model.mat = materials[i];
 	  //mat = materials[i];
@@ -334,7 +337,7 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 	  break;
 	}
 	else if (j+1 == materials.size()){
-	  printf("Material %s used for %s but not defined in geometry.in!",matname.c_str(), STLfile.c_str());
+	  printf("Material %s used for %s but not defined in geometry.in!\n",matname.c_str(), STLfile.c_str());
 	  exit(-1);
 	}
       }

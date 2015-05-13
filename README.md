@@ -29,7 +29,7 @@ has been tested.
 
 ### ALGLIB
 
-[ALGLIB](http://www.alglib.net) is used to do 1D and 2D interpolation for field calculations. It also provides numerical optimization and integration routines required for the MicroRoughness model for UCN interaction with matter. It is included in the repository.
+[ALGLIB](http://www.alglib.net) is used to do 1D and 2D interpolation for field calculations. It is included in the repository.
 
 
 ### libtricubic

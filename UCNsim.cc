@@ -124,7 +124,12 @@ int main(int argc,char** argv)
   ReadInFile(std::string(inpath + "/geometry.in").c_str(), geometryin);
   TConfig particlein;
   ReadInFile(std::string(inpath + "/particle.in").c_str(), particlein);
-
+  for (TConfig::iterator i = particlein.begin(); i != particlein.end(); i++){
+    if (i->first != "all"){
+      i->second = particlein["all"];
+    }
+  }
+  ReadInFile(std::string(inpath + "/particle.in").c_str(), particlein);
 
   // Choose the Random engine
   //

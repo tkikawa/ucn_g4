@@ -21,6 +21,7 @@ UCNRunAction::~UCNRunAction()
 
 void UCNRunAction::BeginOfRunAction(const G4Run*)
 {
+  std::cout<<"Run started."<<std::endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -34,6 +35,7 @@ void UCNRunAction::EndOfRunAction(const G4Run*)
              FindProcess("UCNBoundaryProcess",G4Neutron::NeutronDefinition());
 
   ucnBoundaryProcess->BoundaryProcessSummary();
+  std::cout<<"Run ended."<<std::endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -42,26 +42,22 @@ void UCNPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // This function is called at the begining of event
 
-
   for(int imc=0; imc<ncount; imc++){
+  //for(int imc=0; imc<1; imc++){
 
-    t = G4UniformRand() * ActiveTime;
+    t = G4UniformRand() * ActiveTime * s;
     fParticleGun->SetParticleTime(t);
     RandomPointInSourceVolume();
     //fParticleGun->SetParticlePosition(G4ThreeVector(0.0, 0.0, 0.0));
-    fParticleGun->SetParticlePosition(G4ThreeVector(X*cm, Y*cm, Z*cm));
+    fParticleGun->SetParticlePosition(G4ThreeVector(X, Y, Z));
     polarization = DicePolarisation(ParticleName);
     fParticleGun->SetParticlePolarization(G4ThreeVector(0,polarization,0));
-    
-    particleEnergy = Spectrum(ParticleName);
+    particleEnergy = Spectrum(ParticleName) * eV;
     fParticleGun->SetParticleEnergy(particleEnergy);
     AngularDist(ParticleName, phi, theta);
-    if (phi > pi/2 && phi < pi) phi = pi-phi;
-    
-    pz = std::sin(phi)*std::cos(theta);
-    px = std::sin(phi)*std::sin(theta);
-    py = std::cos(phi);
-    
+    pz = std::sin(theta)*std::cos(phi);
+    px = std::sin(theta)*std::sin(phi);
+    py = std::cos(theta);  
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
     fParticleGun->GeneratePrimaryVertex(anEvent);
 
@@ -137,20 +133,66 @@ void UCNPrimaryGeneratorAction::TSource(TConfig geometryconf){
   std::istringstream sourceconf(geometryconf["SOURCE"].begin()->second);
   sourceconf >> ParticleName;
 
+  std::cout<<"Source type is "<<sourcemode<<std::endl;
+
   if (sourcemode == "boxvolume"){
     sourceconf >> x_min >> x_max >> y_min >> y_max >> z_min >> z_max >> ActiveTime >> PhaseSpaceWeighting;
   }
   else if (sourcemode == "cylvolume"){
     sourceconf >> r_min >> r_max >> phi_min >> phi_max >> z_min >> z_max >> ActiveTime >> PhaseSpaceWeighting;
-  }
-  else if (sourcemode == "STLvolume"){
-    sourceconf >> sourcefile >> ActiveTime >> PhaseSpaceWeighting;
+    phi_max*=conv;
+    phi_min*=conv;
   }
   else if (sourcemode == "cylsurface"){
     sourceconf >> r_min >> r_max >> phi_min >> phi_max >> z_min >> z_max >> ActiveTime >> E_normal;
+    phi_max*=conv;
+    phi_min*=conv;
+    topsurf=(r_max*r_max - r_min*r_min)*(phi_max - phi_min)/2;
+    insurf=r_min*(phi_max - phi_min)*(z_max - z_min);
+    outsurf=r_max*(phi_max - phi_min)*(z_max - z_min);
+    totsurf=topsurf*2+insurf+outsurf;
+  }
+  else if (sourcemode == "STLvolume"){
+    sourceconf >> sourcefile >> ActiveTime >> PhaseSpaceWeighting;
+    scene = importer.ReadFile(sourcefile,
+			      aiProcess_Triangulate           |
+			      aiProcess_JoinIdenticalVertices |
+			      aiProcess_CalcTangentSpace);    
+    m = scene->mMeshes[0];
+    X_min=1e5*mm; X_max=-1e5*mm;
+    Y_min=1e5*mm; Y_max=-1e5*mm;
+    Z_min=1e5*mm; Z_max=-1e5*mm;
+    G4double X_mesh[3], Y_mesh[3], Z_mesh[3];
+    for(unsigned int i=0; i < m->mNumFaces; i++){
+      const aiFace& face = m->mFaces[i];
+      for(int j=0;j<3;j++){
+	X_mesh[j] = m->mVertices[face.mIndices[j]].x*mm;
+	Y_mesh[j] = m->mVertices[face.mIndices[j]].y*mm;
+	Z_mesh[j] = m->mVertices[face.mIndices[j]].z*mm;
+      }
+      Compare(X_max, X_min, X_mesh);
+      Compare(Y_max, Y_min, Y_mesh);
+      Compare(Z_max, Z_min, Z_mesh);
+    }
   }
   else if (sourcemode == "STLsurface"){
     sourceconf >> sourcefile >> ActiveTime >> E_normal;
+    scene = importer.ReadFile(sourcefile,
+			      aiProcess_Triangulate           |
+			      aiProcess_JoinIdenticalVertices |
+			      aiProcess_CalcTangentSpace);    
+    m = scene->mMeshes[0];
+    totsurf = 0;
+    G4double X_mesh[3], Y_mesh[3], Z_mesh[3];
+    for(unsigned int i=0; i < m->mNumFaces; i++){
+      const aiFace& face = m->mFaces[i];
+      for(int j=0;j<3;j++){
+	X_mesh[j] = m->mVertices[face.mIndices[j]].x*mm;
+	Y_mesh[j] = m->mVertices[face.mIndices[j]].y*mm;
+	Z_mesh[j] = m->mVertices[face.mIndices[j]].z*mm;
+      }
+      totsurf += CalcSurf(X_mesh, Y_mesh, Z_mesh);
+    }
   }
   else{
     std::cout << "\nCould not load source """ << sourcemode << """! Did you enter invalid parameters?\n";
@@ -235,20 +277,143 @@ void UCNPrimaryGeneratorAction::RandomPointInSourceVolume(){
   double r, phi_r;
 
   if (sourcemode == "boxvolume"){
-    X = x_min + G4UniformRand()*(x_max - x_min);
-    Y = y_min + G4UniformRand()*(y_max - y_min);
-    Z = z_min + G4UniformRand()*(z_max - z_min);
+    X = x_min + G4UniformRand()*(x_max - x_min)*cm;
+    Y = y_min + G4UniformRand()*(y_max - y_min)*cm;
+    Z = z_min + G4UniformRand()*(z_max - z_min)*cm;
   }
   else if (sourcemode == "cylvolume"){
     r = sqrt(G4UniformRand()*(r_max*r_max - r_min*r_min) + r_min*r_min); // weighting because of the volume element and a r^2 probability outwards
     phi_r = phi_min + G4UniformRand()*(phi_max - phi_min);
-    X = r*cos(phi_r);
-    Y = r*sin(phi_r);
-    Z = z_min + G4UniformRand()*(z_max - z_min);
+    X = r*cos(phi_r)*cm;
+    Y = r*sin(phi_r)*cm;
+    Z = z_min + G4UniformRand()*(z_max - z_min)*cm;
   }
-  else{
-    std::cout << "STLsurface and STLvolume are not implemented yet.\n";
-    exit(-1);
+  else if (sourcemode == "cylsurface"){
+    double randsurf=G4UniformRand()*totsurf;
+
+    if(randsurf<outsurf){
+      phi_r = phi_min + G4UniformRand()*(phi_max - phi_min);
+      X = r_max*cos(phi_r)*cm;
+      Y = r_max*sin(phi_r)*cm;
+      Z = z_min + G4UniformRand()*(z_max - z_min)*cm;
+    }
+    else if(randsurf<outsurf+insurf){
+      phi_r = phi_min + G4UniformRand()*(phi_max - phi_min);
+      X = r_min*cos(phi_r)*cm;
+      Y = r_min*sin(phi_r)*cm;
+      Z = z_min + G4UniformRand()*(z_max - z_min)*cm;
+    }
+    else if(randsurf<outsurf+insurf+topsurf){
+      r = sqrt(G4UniformRand()*(r_max*r_max - r_min*r_min) + r_min*r_min);
+      phi_r = phi_min + G4UniformRand()*(phi_max - phi_min);
+      X = r*cos(phi_r)*cm;
+      Y = r*sin(phi_r)*cm;
+      Z = z_max*cm;
+    }
+    else{
+      r = sqrt(G4UniformRand()*(r_max*r_max - r_min*r_min) + r_min*r_min);
+      phi_r = phi_min + G4UniformRand()*(phi_max - phi_min);
+      X = r*cos(phi_r)*cm;
+      Y = r*sin(phi_r)*cm;
+      Z = z_min*cm;
+    }
+  }
+  else if (sourcemode == "STLsurface"){
+    G4double randsurf = G4UniformRand()*totsurf;
+    G4double tmpsurf = 0;
+    G4double X_mesh[3], Y_mesh[3], Z_mesh[3];
+    for(unsigned int i=0; i < m->mNumFaces; i++){
+      const aiFace& face = m->mFaces[i];
+      for(int j=0;j<3;j++){
+	X_mesh[j] = m->mVertices[face.mIndices[j]].x*mm;
+	Y_mesh[j] = m->mVertices[face.mIndices[j]].y*mm;
+	Z_mesh[j] = m->mVertices[face.mIndices[j]].z*mm;
+      }
+      tmpsurf += CalcSurf(X_mesh, Y_mesh, Z_mesh);
+      if(randsurf < tmpsurf){
+	SetSurfPoint(X_mesh, Y_mesh, Z_mesh);
+	break;
+      }
+    }
+    
+  }
+  else if (sourcemode == "STLvolume"){
+    while(1){
+      X = X_min+G4UniformRand()*(X_max-X_min);
+      Y = Y_min+G4UniformRand()*(Y_max-Y_min);
+      Z = Z_min+G4UniformRand()*(Z_max-Z_min);
+      if(InSolid(X,Y,Z,Z_min))break;
+    }
   }
 
+}
+
+void UCNPrimaryGeneratorAction::Compare(G4double &A_max, G4double &A_min, G4double *A_tmp){
+  for(int i=0;i<3;i++){
+    if(A_min > A_tmp[i]) A_min = A_tmp[i];
+    if(A_max < A_tmp[i]) A_max = A_tmp[i];
+  }
+}
+
+bool UCNPrimaryGeneratorAction::InSolid(G4double x1, G4double y1, G4double z1, G4double z1_min){
+  int ncol = 0;
+  G4double X_mesh[3], Y_mesh[3], Z_mesh[3];
+  for(unsigned int i=0; i < m->mNumFaces; i++){
+    const aiFace& face = m->mFaces[i];
+    for(int j=0;j<3;j++){
+      X_mesh[j] = m->mVertices[face.mIndices[j]].x*mm;
+      Y_mesh[j] = m->mVertices[face.mIndices[j]].y*mm;
+      Z_mesh[j] = m->mVertices[face.mIndices[j]].z*mm;
+    }
+    if(Collision(X_mesh, Y_mesh, Z_mesh, x1, y1, z1, z1_min))ncol++;
+  }
+  if(ncol%2 == 1) return true;
+  else            return false;
+}
+
+
+bool UCNPrimaryGeneratorAction::Collision(G4double *X_tmp, G4double *Y_tmp, G4double *Z_tmp, G4double x1, G4double y1, G4double z1, G4double z1_min){
+  G4double x2, y2, z2;
+  G4double a, b, c, d;// Plane equation: ax+by+cz+d=0
+  G4double cp1,cp2,cp3;// Cross products
+  x2=x1; y2=y1; z2=z1_min-50*mm;
+  a = (Y_tmp[1]-Y_tmp[0])*(Z_tmp[2]-Z_tmp[0])-(Y_tmp[2]-Y_tmp[0])*(Z_tmp[1]-Z_tmp[0]);
+  b = (Z_tmp[1]-Z_tmp[0])*(X_tmp[2]-X_tmp[0])-(Z_tmp[2]-Z_tmp[0])*(X_tmp[1]-X_tmp[0]);
+  c = (X_tmp[1]-X_tmp[0])*(Y_tmp[2]-Y_tmp[0])-(X_tmp[2]-X_tmp[0])*(Y_tmp[1]-Y_tmp[0]);
+  d = -(a*X_tmp[0]+b*Y_tmp[0]+c*Z_tmp[0]);
+  if((a*x1+b*y1+c*z1+d)*(a*x2+b*y2+c*z2+d)>=0)
+    return false;//Check if the two points are in difference sides of the triangle plane
+  cp1=(x1-X_tmp[0])*(Y_tmp[1]-Y_tmp[0])-(y1-Y_tmp[0])*(X_tmp[1]-X_tmp[0]);
+  cp2=(x1-X_tmp[1])*(Y_tmp[2]-Y_tmp[1])-(y1-Y_tmp[1])*(X_tmp[2]-X_tmp[1]);
+  cp3=(x1-X_tmp[2])*(Y_tmp[0]-Y_tmp[2])-(y1-Y_tmp[2])*(X_tmp[0]-X_tmp[2]);
+  if(!(cp1<0&&cp2<0&&cp3<0)&&!(cp1>0&&cp2>0&&cp3>0))
+    return false;//Check if the interpolated point between the two points is in the triangle.    
+  else
+    return true;
+}
+
+G4double UCNPrimaryGeneratorAction::CalcSurf(G4double *X_tmp, G4double *Y_tmp, G4double *Z_tmp){
+  G4double xg, yg, zg, surf;
+  xg = (Y_tmp[1]-Y_tmp[0])*(Z_tmp[2]-Z_tmp[0])-(Z_tmp[1]-Z_tmp[0])*(Y_tmp[2]-Y_tmp[0]);
+  yg = (Z_tmp[1]-Z_tmp[0])*(X_tmp[2]-X_tmp[0])-(X_tmp[1]-X_tmp[0])*(Z_tmp[2]-Z_tmp[0]);
+  zg = (X_tmp[1]-X_tmp[0])*(Y_tmp[2]-Y_tmp[0])-(Y_tmp[1]-Y_tmp[0])*(X_tmp[2]-X_tmp[0]);
+  surf = sqrt(xg*xg + yg*yg + zg*zg)/2;
+  return surf;
+}
+
+void UCNPrimaryGeneratorAction::SetSurfPoint(G4double *X_tmp, G4double *Y_tmp, G4double *Z_tmp){
+  G4double t1=sqrt(G4UniformRand());
+  G4double t2=1-t1;
+  G4double s1=G4UniformRand();
+  G4double s2=1-s1;
+  G4double xtmp[2],ytmp[2],ztmp[2];
+  xtmp[0]=X_tmp[0]*t1+X_tmp[2]*t2;
+  ytmp[0]=Y_tmp[0]*t1+Y_tmp[2]*t2;
+  ztmp[0]=Z_tmp[0]*t1+Z_tmp[2]*t2;
+  xtmp[1]=X_tmp[1]*t1+X_tmp[2]*t2;
+  ytmp[1]=Y_tmp[1]*t1+Y_tmp[2]*t2;
+  ztmp[1]=Z_tmp[1]*t1+Z_tmp[2]*t2;
+  X=xtmp[0]*s1+xtmp[1]*s2;
+  Y=ytmp[0]*s1+ytmp[1]*s2;
+  Z=ztmp[0]*s1+ztmp[1]*s2;
 }
