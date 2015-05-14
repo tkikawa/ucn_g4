@@ -73,9 +73,9 @@ public:
 
   TConfig geometryin;
   TConfig particlein;
-  int ncount;
+
   //UCNPrimaryGeneratorAction(void);
-  UCNPrimaryGeneratorAction(int simcount, int secondaries, TConfig GEOMIN, TConfig PARTIN);
+  UCNPrimaryGeneratorAction(int secondaries, TConfig GEOMIN, TConfig PARTIN);
   virtual ~UCNPrimaryGeneratorAction();
 
   virtual void GeneratePrimaries(G4Event*);

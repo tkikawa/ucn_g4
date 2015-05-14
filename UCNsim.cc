@@ -131,6 +131,25 @@ int main(int argc,char** argv)
   }
   ReadInFile(std::string(inpath + "/particle.in").c_str(), particlein);
 
+
+  int simtype = PARTICLE;
+  //int neutdist = 0;
+  int simcount = 1;
+  double SimTime = 1000;
+  int secondary = 1;
+  std::istringstream(configin["global"]["simtype"])>> simtype;
+  //std::istringstream(configin["global"]["neutdist"])>> neutdist;
+  std::istringstream(configin["global"]["simcount"])>> simcount;
+  std::istringstream(configin["global"]["simtime"])>> SimTime;
+  std::istringstream(configin["global"]["secondaries"])>> secondary;
+  simtype=1;
+  if(simtype!=1){
+    std::cout<<"Only the particle simualtion is available.\n";
+    std::cout<<"Set simtype in config.in 1.\n";
+    exit(-1);
+  }
+
+
   // Choose the Random engine
   //
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
@@ -150,13 +169,13 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new UCNDetectorConstruction(geometryin));
+  runManager->SetUserInitialization(new UCNDetectorConstruction(SimTime, geometryin));
   G4cout << "Detector init. OK!" << G4endl;
   // Physics list
   runManager->SetUserInitialization(new UCNPhysicsList());
   G4cout << "PhysicsList init. OK!" << G4endl;
   // User action initialization
-  runManager->SetUserInitialization(new UCNActionInitialization(jobnumber,outpath,configin,geometryin,particlein));
+  runManager->SetUserInitialization(new UCNActionInitialization(jobnumber, outpath, secondary, geometryin, particlein));
   G4cout << "Action init. OK!" << G4endl;
 
   // Initialize G4 kernel
@@ -183,7 +202,8 @@ int main(int argc,char** argv)
   else
   {
     // normal mode
-    runManager->BeamOn(1);
+    //runManager->BeamOn(1);
+    runManager->BeamOn(simcount);
   }
   
 #ifdef G4VIS_USE

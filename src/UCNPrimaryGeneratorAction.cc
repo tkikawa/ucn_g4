@@ -13,11 +13,10 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 //UCNPrimaryGeneratorAction::UCNPrimaryGeneratorAction(void)
-UCNPrimaryGeneratorAction::UCNPrimaryGeneratorAction(int simcount, int secondaries, TConfig GEOMIN, TConfig PARTIN)
+UCNPrimaryGeneratorAction::UCNPrimaryGeneratorAction(int secondaries, TConfig GEOMIN, TConfig PARTIN)
 {
   geometryin=GEOMIN;
   particlein=PARTIN;
-  ncount=simcount;
   ParticleName="neutron";
   ConfigInit(particlein);
   TSource(geometryin);
@@ -42,26 +41,22 @@ void UCNPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // This function is called at the begining of event
 
-  for(int imc=0; imc<ncount; imc++){
-  //for(int imc=0; imc<1; imc++){
 
-    t = G4UniformRand() * ActiveTime * s;
-    fParticleGun->SetParticleTime(t);
-    RandomPointInSourceVolume();
-    //fParticleGun->SetParticlePosition(G4ThreeVector(0.0, 0.0, 0.0));
-    fParticleGun->SetParticlePosition(G4ThreeVector(X, Y, Z));
-    polarization = DicePolarisation(ParticleName);
-    fParticleGun->SetParticlePolarization(G4ThreeVector(0,polarization,0));
-    particleEnergy = Spectrum(ParticleName) * eV;
-    fParticleGun->SetParticleEnergy(particleEnergy);
-    AngularDist(ParticleName, phi, theta);
-    pz = std::sin(theta)*std::cos(phi);
-    px = std::sin(theta)*std::sin(phi);
-    py = std::cos(theta);  
-    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
-    fParticleGun->GeneratePrimaryVertex(anEvent);
-
-  }
+  t = G4UniformRand() * ActiveTime * s;
+  fParticleGun->SetParticleTime(t);
+  RandomPointInSourceVolume();
+  //fParticleGun->SetParticlePosition(G4ThreeVector(0.0, 0.0, 0.0));
+  fParticleGun->SetParticlePosition(G4ThreeVector(X, Y, Z));
+  polarization = DicePolarisation(ParticleName);
+  fParticleGun->SetParticlePolarization(G4ThreeVector(0,polarization,0));
+  particleEnergy = Spectrum(ParticleName) * eV;
+  fParticleGun->SetParticleEnergy(particleEnergy);
+  AngularDist(ParticleName, phi, theta);
+  pz = std::sin(theta)*std::cos(phi);
+  px = std::sin(theta)*std::sin(phi);
+  py = std::cos(theta);  
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
+  fParticleGun->GeneratePrimaryVertex(anEvent);
 
 }
 

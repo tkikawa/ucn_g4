@@ -4,6 +4,8 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
+#include "G4UserLimits.hh"
+
 #include "G4Field.hh"
 #include "UCNGlobals.hh"
 #include "UCN2DField.hh"
@@ -29,6 +31,8 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
 
+  G4UserLimits* g4limit;
+
   TConfig geometryin;
 
   std::string material_name;
@@ -38,8 +42,9 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
 
   G4UCNMaterialPropertiesTable *mattbl[100];
 
+  double a, cohcs, incohcs, scatcs, abscs, density, fermipot, loss;
 
-  UCNDetectorConstruction(TConfig GEOMIN);
+  UCNDetectorConstruction(int SIMTIME, TConfig GEOMIN);
   //UCNDetectorConstruction();
   virtual ~UCNDetectorConstruction();
 
@@ -65,6 +70,7 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
 private:
  
   void GetMaterial(int imat, std::string name);
+  void GetElementValues(std::string name);
   void DefineMaterials();
   void ReadInField(TConfig conf);
 

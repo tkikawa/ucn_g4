@@ -8,19 +8,27 @@
 class UCNTrackingAction : public G4UserTrackingAction {
 
   public:
-  std::ofstream file;
-
+  
+  std::ofstream file[3];
+  int pid;
+  
   int secondaries;
   int jobnumber;
+  std::string outpath;
+  std::string name;
+  
   double tstart, xstart, ystart, zstart, vxstart, vystart, vzstart, Hstart, Estart, tend, xend, yend, zend, vxend, vyend, vzend, Hend, Eend, spinflipprob, ComputingTime, trajlength, Hmax;
   int particle, polstart, polend, stopID, NSpinflip, Nhit, Nstep;
 
 
-  UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON, std::string NAME);
+  UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON);
   virtual ~UCNTrackingAction();
    
   virtual void PreUserTrackingAction(const G4Track*);
   virtual void PostUserTrackingAction(const G4Track*);
+
+  void OpenFile();
+  void PrintData();
 
 };
 

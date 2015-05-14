@@ -10,31 +10,11 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
 
-UCNSteppingAction::UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON, std::string NAME)
+UCNSteppingAction::UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON)
 {
   secondaries=SECON;
-
   jobnumber=JOBNUM;
-  std::string filesuffix = "track.out";
-  std::string outpath = OUTPATH;
-  std::string name = NAME;
-
-  if (!trackfile.is_open()){
-    std::ostringstream filename;
-    filename << outpath << '/' << std::setw(12) << std::setfill('0') << jobnumber << name << filesuffix;
-    std::cout << "Creating " << filename.str() << '\n';
-    trackfile.open(filename.str().c_str());
-    if (!trackfile.is_open()){
-      std::cout << "Could not create" << filename.str() << '\n';
-      exit(-1);
-    }
-    trackfile << "jobnumber particle polarisation "
-      "t x y z vx vy vz "
-      "H E Bx dBxdx dBxdy dBxdz By dBydx "
-      "dBydy dBydz Bz dBzdx dBzdy dBzdz Babs dBdx dBdy dBdz Ex Ey Ez V\n";
-    trackfile.precision(10);
-  }
-
+  outpath = OUTPATH;
 
 }
 
@@ -65,14 +45,14 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   H = theTrack->GetTotalEnergy()/eV;
   E = theTrack->GetKineticEnergy()/eV;
 
-  trackfile << jobnumber << " " << particle << " " << polarisation << " "
-	    << t << " " << x << " " << y << " " << z << " " << vx << " "
-	    << vy << " " << vz << " " << H << " " << E << " ";
-  for (int i = 0; i < 4; i++)
-    for (int j = 0; j < 4; j++)
-      trackfile << B[i][j] << " ";
-  trackfile << Ei[0] << " " << Ei[1] << " " << Ei[2] << " " << V << '\n';
+  pid = theTrack->GetDefinition()->GetPDGEncoding();
+  if(pid==2112)      {pid=0;name="neutron";}
+  else if(pid==2212) {pid=1;name="proton";}
+  else if(pid==11)   {pid=2;name="electron";}
+  else               return;
 
+  if (!trackfile[pid].is_open())OpenFile();
+  PrintData();
 
   /*
   // check if it is NOT muon
@@ -95,5 +75,35 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   theTrack->SetTrackStatus(fSuspend);
   */
 
+}
+
+void UCNSteppingAction::OpenFile(){
+
+  std::string filesuffix = "track.out";
+  std::ostringstream filename;
+  filename << outpath << '/' << std::setw(12) << std::setfill('0') << jobnumber << name << filesuffix;
+  std::cout << "Creating " << filename.str() << '\n';
+  trackfile[pid].open(filename.str().c_str());
+  if (!trackfile[pid].is_open()){
+    std::cout << "Could not create" << filename.str() << '\n';
+    exit(-1);
+  }
+  trackfile[pid] << "jobnumber particle polarisation "
+    "t x y z vx vy vz "
+    "H E Bx dBxdx dBxdy dBxdz By dBydx "
+    "dBydy dBydz Bz dBzdx dBzdy dBzdz Babs dBdx dBdy dBdz Ex Ey Ez V\n";
+  trackfile[pid].precision(10);
+  
+}
+
+void UCNSteppingAction::PrintData(){
+
+  trackfile[pid] << jobnumber << " " << particle << " " << polarisation << " "
+	    << t << " " << x << " " << y << " " << z << " " << vx << " "
+	    << vy << " " << vz << " " << H << " " << E << " ";
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++)
+      trackfile[pid] << B[i][j] << " ";
+  trackfile[pid] << Ei[0] << " " << Ei[1] << " " << Ei[2] << " " << V << '\n';
 
 }

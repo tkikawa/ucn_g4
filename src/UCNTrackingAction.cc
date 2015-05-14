@@ -6,36 +6,11 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-UCNTrackingAction::UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON, std::string NAME)
+UCNTrackingAction::UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON)
 {
-
   secondaries=SECON;
   jobnumber=JOBNUM;
-  std::string filesuffix = "end.out";
-  std::string outpath = OUTPATH;
-  std::string name = NAME;
-
-  if (!file.is_open()){
-    std::ostringstream filename;
-    filename << outpath << '/' << std::setw(12) << std::setfill('0') << jobnumber << name << filesuffix;
-    std::cout << "Creating " << filename.str() << '\n';
-    file.open(filename.str().c_str());
-    if (!file.is_open()){
-      std::cout << "Could not create" << filename.str() << '\n';
-      exit(-1);
-    }
-    file << "jobnumber particle "
-      "tstart xstart ystart zstart "
-      "vxstart vystart vzstart "
-      "polstart Hstart Estart "
-      "tend xend yend zend "
-      "vxend vyend vzend "
-      "polend Hend Eend stopID Nspinflip spinflipprob "
-      "ComputingTime Nhit Nstep trajlength Hmax\n";
-    file.precision(10);
-  }
-
-
+  outpath = OUTPATH;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -54,7 +29,13 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   //else
   //{ fpTrackingManager->SetStoreTrajectory(false); }
 
-  if(aTrack->GetParentID()!=0&&!secondaries) { return; }
+  if(aTrack->GetParentID()!=0&&!secondaries){
+    fpTrackingManager->SetStoreTrajectory(false);
+    return;
+  }
+  else{
+    fpTrackingManager->SetStoreTrajectory(true);
+  }
 
   particle=0;
   tstart = aTrack->GetGlobalTime()/s;
@@ -99,16 +80,50 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   trajlength = aTrack->GetTrackLength()/m;
   
   Hmax=0;
-  
-    
-  file    << jobnumber << " " << particle << " "
-	  << tstart << " " << xstart << " " << ystart << " " << zstart << " "
-	  << vxstart << " " << vystart << " " << vzstart << " "
-	  << polstart << " " << Hstart << " " << Estart << " "
-	  << tend << " " << xend << " " << yend << " " << zend << " "
-	  << vxend << " " << vyend << " " << vzend << " "
-	  << polend << " " << Hend << " " << Eend << " " << stopID << " " << NSpinflip << " " << spinflipprob << " "
-	  << ComputingTime << " " << Nhit << " " << Nstep << " " << trajlength << " " << Hmax << '\n';
+
+  pid = aTrack->GetDefinition()->GetPDGEncoding();
+  if(pid==2112)      {pid=0;name="neutron";}
+  else if(pid==2212) {pid=1;name="proton";}
+  else if(pid==11)   {pid=2;name="electron";}
+  else               return;
+
+  if (!file[pid].is_open())OpenFile();
+  PrintData();
+
+}
+
+void UCNTrackingAction::OpenFile(){
+
+  std::string filesuffix = "end.out";
+  std::ostringstream filename;
+  filename << outpath << '/' << std::setw(12) << std::setfill('0') << jobnumber << name << filesuffix;
+  std::cout << "Creating " << filename.str() << '\n';
+  file[pid].open(filename.str().c_str());
+  if (!file[pid].is_open()){
+    std::cout << "Could not create" << filename.str() << '\n';
+    exit(-1);
+  }
+  file[pid] << "jobnumber particle "
+    "tstart xstart ystart zstart "
+    "vxstart vystart vzstart "
+    "polstart Hstart Estart "
+    "tend xend yend zend "
+    "vxend vyend vzend "
+    "polend Hend Eend stopID Nspinflip spinflipprob "
+    "ComputingTime Nhit Nstep trajlength Hmax\n";
+  file[pid].precision(10);
+}
+
+void UCNTrackingAction::PrintData(){
+
+  file[pid] << jobnumber << " " << particle << " "
+	    << tstart << " " << xstart << " " << ystart << " " << zstart << " "
+	    << vxstart << " " << vystart << " " << vzstart << " "
+	    << polstart << " " << Hstart << " " << Estart << " "
+	    << tend << " " << xend << " " << yend << " " << zend << " "
+	    << vxend << " " << vyend << " " << vzend << " "
+	    << polend << " " << Hend << " " << Eend << " " << stopID << " " << NSpinflip << " " << spinflipprob << " "
+	    << ComputingTime << " " << Nhit << " " << Nstep << " " << trajlength << " " << Hmax << '\n';
   
 
 }
