@@ -1,14 +1,16 @@
 #ifndef UCNSteppingAction_H
 #define UCNSteppingAction_H 1
 
-#include "globals.hh"
 #include "G4UserSteppingAction.hh"
+#include "G4RunManager.hh"
 
 #include <fstream>
 
 class UCNSteppingAction : public G4UserSteppingAction
 {
   public:
+
+  G4RunManager *runman;
 
   std::ofstream trackfile[3];
   int pid;
@@ -35,4 +37,3 @@ class UCNSteppingAction : public G4UserSteppingAction
 };
 
 #endif
-

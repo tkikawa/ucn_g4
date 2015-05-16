@@ -11,6 +11,7 @@ UCNTrackingAction::UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON)
   secondaries=SECON;
   jobnumber=JOBNUM;
   outpath = OUTPATH;
+  runman =  G4RunManager::GetRunManager();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -23,12 +24,6 @@ UCNTrackingAction::~UCNTrackingAction()
 
 void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
-  // Create trajectory only for primaries
-  //if(aTrack->GetParentID()==0)
-  //{ fpTrackingManager->SetStoreTrajectory(true); }
-  //else
-  //{ fpTrackingManager->SetStoreTrajectory(false); }
-
   if(aTrack->GetParentID()!=0&&!secondaries){
     fpTrackingManager->SetStoreTrajectory(false);
     return;
@@ -37,7 +32,7 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
     fpTrackingManager->SetStoreTrajectory(true);
   }
 
-  particle=0;
+  particle = runman->GetCurrentEvent()->GetEventID();
   tstart = aTrack->GetGlobalTime()/s;
   xstart = (aTrack->GetPosition()/m)[0];
   ystart = (aTrack->GetPosition()/m)[1];

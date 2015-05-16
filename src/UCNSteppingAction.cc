@@ -15,7 +15,7 @@ UCNSteppingAction::UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON)
   secondaries=SECON;
   jobnumber=JOBNUM;
   outpath = OUTPATH;
-
+  runman =  G4RunManager::GetRunManager();
 }
 
 UCNSteppingAction::~UCNSteppingAction()
@@ -32,7 +32,7 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   // check if it is primary
   if(theTrack->GetParentID()!=0&&!secondaries) { return; }
 
-  particle=0;
+  particle = runman->GetCurrentEvent()->GetEventID();
   t = theTrack->GetGlobalTime()/s;
   x = (theTrack->GetPosition()/m)[0];
   y = (theTrack->GetPosition()/m)[1];

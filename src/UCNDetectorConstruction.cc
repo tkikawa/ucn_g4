@@ -111,34 +111,22 @@ void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
   }
   else if(name=="PolishedSteel"){
     ucn_material[imat] = nistMan->FindOrBuildMaterial("G4_STAINLESS-STEEL");
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=9.4169352; incohcs=1.3042522; scatcs=10.7211872; abscs=3.0528517; fermipot=183.0405; loss=1.04E-04;
     return;
   }
   else if(name=="PE"){
     ucn_material[imat] = nistMan->FindOrBuildMaterial("G4_POLYETHYLENE");
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=5.005703007; incohcs=11.5357086; scatcs=16.54101522; abscs=0.050797781; fermipot=-8.6553; loss=-2.23E-04;
     return;
   }
   else if(name=="DLC"){
     ucn_material[imat] = new G4Material("DLC", 6, 12.0107*g/mole, 2.8*g/cm3);
-    cohcs=5.551;
-    incohcs=0.001;
-    scatcs=5.551;
-    abscs=0.0035; 
+    cohcs=5.551; incohcs=0.001; scatcs=5.551; abscs=0.0035; fermipot=243.0964; loss=1.46E-07;
     return;
   }
   else if(name=="DLCLT"){
     ucn_material[imat] = new G4Material("DLCLT", 6, 12.0107*g/mole, 2.8*g/cm3);
-    cohcs=5.551;
-    incohcs=0.001;
-    scatcs=5.551;
-    abscs=0.0035;
+    cohcs=5.551; incohcs=0.001; scatcs=5.551; abscs=0.0035; fermipot=243.0964; loss=1.46E-07;
     return;
   }
   else if(name=="UCNdet"){
@@ -147,10 +135,7 @@ void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
     G4Element* elO = nistMan->FindOrBuildElement("O");
     ucn_material[imat] -> AddElement(elSi,1);
     ucn_material[imat] -> AddElement(elO,1);
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=3.264877149; incohcs=0.002295792; scatcs=3.266746889; abscs=0.080032559; fermipot=90.6365; loss=3.02E-06;
     return;
   }
   else if(name=="NiPLT"){
@@ -159,10 +144,7 @@ void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
     G4Element* elP = nistMan->FindOrBuildElement("P");
     ucn_material[imat] -> AddElement(elNi,1);
     ucn_material[imat] -> AddElement(elP,1);
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=11.80105; incohcs=4.42075; scatcs=16.2218; abscs=3.8423; fermipot=212.9579; loss=1.05E-04;
     return;
   }
   else if(name=="NiMo"){
@@ -171,10 +153,7 @@ void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
     G4Element* elMo = nistMan->FindOrBuildElement("Mo");
     ucn_material[imat] -> AddElement(elNi,1);
     ucn_material[imat] -> AddElement(elMo,1);
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=12.1555; incohcs=4.426; scatcs=16.5815; abscs=4.1885; fermipot=226.7135; loss=1.20E-04;
     return;
   }
   else if(name=="CuBe"){
@@ -183,26 +162,17 @@ void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
     G4Element* elBe = nistMan->FindOrBuildElement("Be");
     ucn_material[imat] -> AddElement(elCu,1);
     ucn_material[imat] -> AddElement(elBe,1);
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=7.4879; incohcs=0.539036; scatcs=8.022; abscs=3.704552; fermipot=178.8031; loss=1.19E-04;
     return;
   }
   else if(name=="LHe"){
     ucn_material[imat] = new G4Material("LHe", 2, 4.0026*g/mole, 0.1248*g/cm3);
-    cohcs=1.34;
-    incohcs=0;
-    scatcs=1.34;
-    abscs=0;//for isopure 4He
+    cohcs=1.34; incohcs=0; scatcs=1.34; abscs=0; fermipot=18.5298; loss=0;//for isopure 4He
     return;
   }
   else if(name=="LHePerf"){
     ucn_material[imat] = new G4Material("LHePerf", 2, 4.0026*g/mole, 0.1248*g/cm3);
-    cohcs=1.34;
-    incohcs=0;
-    scatcs=1.34;
-    abscs=0;//for isopure 4He
+    cohcs=1.34; incohcs=0; scatcs=1.34; abscs=0; fermipot=18.5298; loss=0;//for isopure 4He
     return;
   }
   else if(name=="BeO"){
@@ -211,19 +181,13 @@ void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
     G4Element* elO = nistMan->FindOrBuildElement("O");
     ucn_material[imat] -> AddElement(elBe,1);
     ucn_material[imat] -> AddElement(elO,1);
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=5.456368569; incohcs=0.00116032; scatcs=5.456368569; abscs=0.002859974; fermipot=256.6665; loss=1.59E-07;
     return;
   }
   else if(name=="SS"){
     //ucn_material[imat] = new G4Material("SS", 8*g/cm3);
     ucn_material[imat] = nistMan->FindOrBuildMaterial("G4_STAINLESS-STEEL");
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=9.4169352; incohcs=1.3042522; scatcs=10.7211872; abscs=3.0528517; fermipot=183.0405; loss=1.04E-04;
     return;
   }
   else if(name=="dPE"){
@@ -232,10 +196,7 @@ void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
     G4Element* elD = new G4Element("Deuterium", "D", 1., 2.014*g/mole);
     ucn_material[imat] -> AddElement(elC,2);
     ucn_material[imat] -> AddElement(elD,4);
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=5.561297234; incohcs=0.515610557; scatcs=6.075656639; abscs=0.002751316; fermipot=209.4173; loss=6.31E-08;
     return;
   }
   else if(name=="dPS"){
@@ -244,10 +205,7 @@ void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
     G4Element* elD = new G4Element("Deuterium", "D", 1., 2.014*g/mole);
     ucn_material[imat] -> AddElement(elC,8);
     ucn_material[imat] -> AddElement(elD,8);
-    cohcs=0;
-    incohcs=0;
-    scatcs=0;
-    abscs=0;
+    cohcs=5.55688801; incohcs=0.295256889; scatcs=5.851001289; abscs=0.003071899; fermipot=170.7351; loss=8.39E-08;
     return;
   }
   else{
@@ -370,6 +328,7 @@ void UCNDetectorConstruction::DefineMaterials()
     if (ss){
       std::cout<<"Material setting for "<<material_name.c_str()<<"..."<<std::flush;
       GetMaterial(imat, material_name);
+
       mattbl[imat] = new G4UCNMaterialPropertiesTable();
       mattbl[imat]->AddConstProperty("FERMIPOT",FermiReal);
       mattbl[imat]->AddConstProperty("LOSS",FermiImag/FermiReal);
@@ -550,36 +509,36 @@ void UCNDetectorConstruction::ConstructSDandField()
     fField = new UCNField(fields);
     fField->SetGravityActive(true);
 
-     G4RepleteEofM* equation = new G4RepleteEofM(fField);
-     // G4EqGravityField* equation = new G4EqGravityField(fField);
+    G4RepleteEofM* equation = new G4RepleteEofM(fField);
+    // G4EqGravityField* equation = new G4EqGravityField(fField);
 
-     G4FieldManager* fieldManager
+    G4FieldManager* fieldManager
       = G4TransportationManager::GetTransportationManager()->GetFieldManager();
-     fieldManager->SetDetectorField(fField);
+    fieldManager->SetDetectorField(fField);
 
 
-     // Set 12 to activate the spin tracking
-     G4MagIntegratorStepper* stepper = new G4ClassicalRK4(equation,12);
-     // G4MagIntegratorStepper* stepper = new G4ClassicalRK4(equation,8);
+    // Set 12 to activate the spin tracking
+    G4MagIntegratorStepper* stepper = new G4ClassicalRK4(equation,12);
+    // G4MagIntegratorStepper* stepper = new G4ClassicalRK4(equation,8);
 
-     G4double minStep           = 0.01*mm;
-
-     G4ChordFinder* chordFinder = 
+    G4double minStep           = 0.01*mm;
+    
+    G4ChordFinder* chordFinder = 
                    new G4ChordFinder((G4MagneticField*)fField,minStep,stepper);
 
-     // Set accuracy parameters
-     G4double deltaChord        = 3.0*mm;
-     chordFinder->SetDeltaChord( deltaChord );
+    // Set accuracy parameters
+    G4double deltaChord        = 3.0*mm;
+    chordFinder->SetDeltaChord( deltaChord );
+    
+    G4double deltaOneStep      = 0.01*mm;
+    fieldManager->SetAccuraciesWithDeltaOneStep(deltaOneStep);
+    
+    G4double deltaIntersection = 0.1*mm;
+    fieldManager->SetDeltaIntersection(deltaIntersection);
 
-     G4double deltaOneStep      = 0.01*mm;
-     fieldManager->SetAccuraciesWithDeltaOneStep(deltaOneStep);
-
-     G4double deltaIntersection = 0.1*mm;
-     fieldManager->SetDeltaIntersection(deltaIntersection);
-
-     G4TransportationManager* transportManager =
+    G4TransportationManager* transportManager =
                            G4TransportationManager::GetTransportationManager();
-
+    
      G4PropagatorInField* fieldPropagator =
                                       transportManager->GetPropagatorInField();
 

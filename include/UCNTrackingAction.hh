@@ -2,6 +2,7 @@
 #define UCNTrackingAction_h 1
 
 #include "G4UserTrackingAction.hh"
+#include "G4RunManager.hh"
 
 #include <fstream>
 
@@ -9,6 +10,8 @@ class UCNTrackingAction : public G4UserTrackingAction {
 
   public:
   
+  G4RunManager *runman;
+
   std::ofstream file[3];
   int pid;
   
