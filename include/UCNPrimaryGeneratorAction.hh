@@ -95,7 +95,7 @@ private:
 
   Assimp::Importer importer;
   const aiScene* scene;
-  aiMesh* m;
+  aiMesh* aim;
   void Compare(G4double &A_max, G4double &A_min, G4double *A_tmp);
   bool InSolid(G4double x1, G4double y1, G4double z1, G4double z1_min);
   bool Collision(G4double *X_tmp, G4double *Y_tmp, G4double *Z_tmp, G4double x1, G4double y1, G4double z1, G4double z1_min);

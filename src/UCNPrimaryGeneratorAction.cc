@@ -153,17 +153,17 @@ void UCNPrimaryGeneratorAction::TSource(TConfig geometryconf){
 			      aiProcess_Triangulate           |
 			      aiProcess_JoinIdenticalVertices |
 			      aiProcess_CalcTangentSpace);    
-    m = scene->mMeshes[0];
-    X_min=1e5*mm; X_max=-1e5*mm;
-    Y_min=1e5*mm; Y_max=-1e5*mm;
-    Z_min=1e5*mm; Z_max=-1e5*mm;
+    aim = scene->mMeshes[0];
+    X_min=1e2*m; X_max=-1e2*m;
+    Y_min=1e2*m; Y_max=-1e2*m;
+    Z_min=1e2*m; Z_max=-1e2*m;
     G4double X_mesh[3], Y_mesh[3], Z_mesh[3];
-    for(unsigned int i=0; i < m->mNumFaces; i++){
-      const aiFace& face = m->mFaces[i];
+    for(unsigned int i=0; i < aim->mNumFaces; i++){
+      const aiFace& face = aim->mFaces[i];
       for(int j=0;j<3;j++){
-	X_mesh[j] = m->mVertices[face.mIndices[j]].x*mm;
-	Y_mesh[j] = m->mVertices[face.mIndices[j]].y*mm;
-	Z_mesh[j] = m->mVertices[face.mIndices[j]].z*mm;
+	X_mesh[j] = aim->mVertices[face.mIndices[j]].x*m;
+	Y_mesh[j] = aim->mVertices[face.mIndices[j]].y*m;
+	Z_mesh[j] = aim->mVertices[face.mIndices[j]].z*m;
       }
       Compare(X_max, X_min, X_mesh);
       Compare(Y_max, Y_min, Y_mesh);
@@ -176,15 +176,15 @@ void UCNPrimaryGeneratorAction::TSource(TConfig geometryconf){
 			      aiProcess_Triangulate           |
 			      aiProcess_JoinIdenticalVertices |
 			      aiProcess_CalcTangentSpace);    
-    m = scene->mMeshes[0];
+    aim = scene->mMeshes[0];
     totsurf = 0;
     G4double X_mesh[3], Y_mesh[3], Z_mesh[3];
-    for(unsigned int i=0; i < m->mNumFaces; i++){
-      const aiFace& face = m->mFaces[i];
+    for(unsigned int i=0; i < aim->mNumFaces; i++){
+      const aiFace& face = aim->mFaces[i];
       for(int j=0;j<3;j++){
-	X_mesh[j] = m->mVertices[face.mIndices[j]].x*mm;
-	Y_mesh[j] = m->mVertices[face.mIndices[j]].y*mm;
-	Z_mesh[j] = m->mVertices[face.mIndices[j]].z*mm;
+	X_mesh[j] = aim->mVertices[face.mIndices[j]].x*m;
+	Y_mesh[j] = aim->mVertices[face.mIndices[j]].y*m;
+	Z_mesh[j] = aim->mVertices[face.mIndices[j]].z*m;
       }
       totsurf += CalcSurf(X_mesh, Y_mesh, Z_mesh);
     }
@@ -317,12 +317,12 @@ void UCNPrimaryGeneratorAction::RandomPointInSourceVolume(){
     G4double randsurf = G4UniformRand()*totsurf;
     G4double tmpsurf = 0;
     G4double X_mesh[3], Y_mesh[3], Z_mesh[3];
-    for(unsigned int i=0; i < m->mNumFaces; i++){
-      const aiFace& face = m->mFaces[i];
+    for(unsigned int i=0; i < aim->mNumFaces; i++){
+      const aiFace& face = aim->mFaces[i];
       for(int j=0;j<3;j++){
-	X_mesh[j] = m->mVertices[face.mIndices[j]].x*mm;
-	Y_mesh[j] = m->mVertices[face.mIndices[j]].y*mm;
-	Z_mesh[j] = m->mVertices[face.mIndices[j]].z*mm;
+	X_mesh[j] = aim->mVertices[face.mIndices[j]].x*m;
+	Y_mesh[j] = aim->mVertices[face.mIndices[j]].y*m;
+	Z_mesh[j] = aim->mVertices[face.mIndices[j]].z*m;
       }
       tmpsurf += CalcSurf(X_mesh, Y_mesh, Z_mesh);
       if(randsurf < tmpsurf){
@@ -353,12 +353,12 @@ void UCNPrimaryGeneratorAction::Compare(G4double &A_max, G4double &A_min, G4doub
 bool UCNPrimaryGeneratorAction::InSolid(G4double x1, G4double y1, G4double z1, G4double z1_min){
   int ncol = 0;
   G4double X_mesh[3], Y_mesh[3], Z_mesh[3];
-  for(unsigned int i=0; i < m->mNumFaces; i++){
-    const aiFace& face = m->mFaces[i];
+  for(unsigned int i=0; i < aim->mNumFaces; i++){
+    const aiFace& face = aim->mFaces[i];
     for(int j=0;j<3;j++){
-      X_mesh[j] = m->mVertices[face.mIndices[j]].x*mm;
-      Y_mesh[j] = m->mVertices[face.mIndices[j]].y*mm;
-      Z_mesh[j] = m->mVertices[face.mIndices[j]].z*mm;
+      X_mesh[j] = aim->mVertices[face.mIndices[j]].x*m;
+      Y_mesh[j] = aim->mVertices[face.mIndices[j]].y*m;
+      Z_mesh[j] = aim->mVertices[face.mIndices[j]].z*m;
     }
     if(Collision(X_mesh, Y_mesh, Z_mesh, x1, y1, z1, z1_min))ncol++;
   }

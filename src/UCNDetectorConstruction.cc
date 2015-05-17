@@ -311,7 +311,9 @@ void UCNDetectorConstruction::DefineMaterials()
   G4NistManager* nistMan = G4NistManager::Instance(); 
   fVacuum = nistMan->FindOrBuildMaterial("G4_Galactic");
 
-  int imat=0;
+  G4double neV = 1.e-9*eV;
+
+  int imat = 0;
   double FermiReal; ///< Real part of Fermi potential
   double FermiImag; ///< Imaginary part of Fermi potential
   double DiffProb; ///< Diffuse reflection probability
@@ -334,17 +336,16 @@ void UCNDetectorConstruction::DefineMaterials()
       mattbl[imat]->AddConstProperty("LOSS",FermiImag/FermiReal);
       mattbl[imat]->AddConstProperty("DIFFUSION",DiffProb);
       mattbl[imat]->AddConstProperty("SPINFLIP",SpinflipProb);
-      mattbl[imat]->AddConstProperty("MR_RRMS", RMSRoughness*nm);
-      mattbl[imat]->AddConstProperty("MR_CORRLEN", CorrelLength*nm);
+      mattbl[imat]->AddConstProperty("MR_RRMS", RMSRoughness*m);
+      mattbl[imat]->AddConstProperty("MR_CORRLEN", CorrelLength*m);
 
       mattbl[imat]->AddConstProperty("REFLECTIVITY",1.);
       mattbl[imat]->AddConstProperty("LOSSCS",0.);
       mattbl[imat]->AddConstProperty("ABSCS",abscs);
       mattbl[imat]->AddConstProperty("SCATCS",scatcs);
 
-      G4double neV = 1.e-9*eV;
-      mattbl[imat]->SetMicroRoughnessParameters(CorrelLength*nm,
-						RMSRoughness*nm,
+      mattbl[imat]->SetMicroRoughnessParameters(CorrelLength*m,
+						RMSRoughness*m,
 						180, 1000,
 						0*degree, 90*degree,
 						1*neV, 1000*neV,
@@ -373,9 +374,9 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
   // World
   //
 
-  G4double worldSizeX = 10.*m;
-  G4double worldSizeY = 10.*m;
-  G4double worldSizeZ = 10.*m;
+  G4double worldSizeX = 20.*m;
+  G4double worldSizeY = 20.*m;
+  G4double worldSizeZ = 20.*m;
 
   G4Box* solidWorld = new G4Box("World",
                                 worldSizeX/2.,worldSizeY/2.,worldSizeZ/2.);
@@ -442,7 +443,7 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 	    //model.name = name;
 	    offset = G4ThreeVector(0, 0, 0);
 	    std::cout<<"Reading: "<<STLfile<<std::endl;
-	    CADMesh *mesh = new CADMesh((char*)STLfile.c_str(), "STL", mm, offset, false);
+	    CADMesh *mesh = new CADMesh((char*)STLfile.c_str(), "STL", m, offset, false);
 	    cad_solid[icad] = (G4VSolid*)mesh->TessellatedMesh();
 	    sprintf(logical_name,"cad_logical_%d",icad);
 	    cad_logical[icad] = new G4LogicalVolume(cad_solid[icad], ucn_material[j], logical_name, 0, 0, 0);

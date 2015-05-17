@@ -42,13 +42,13 @@
 #
 # Many other options available with /vis/modeling and /vis/filtering.
 # For example, select colour by particle ID
-/vis/modeling/trajectories/create/drawByParticleID
-/vis/modeling/trajectories/drawByParticleID-0/set e- blue 
-/vis/modeling/trajectories/drawByParticleID-0/set mu+ green 
-/vis/modeling/trajectories/drawByParticleID-0/set e+ red 
-/vis/modeling/trajectories/drawByParticleID-0/set gamma gray
-/vis/modeling/trajectories/drawByParticleID-0/set nu_e yellow 
-/vis/modeling/trajectories/drawByParticleID-0/set anti_nu_mu yellow 
+#/vis/modeling/trajectories/create/drawByParticleID
+#/vis/modeling/trajectories/drawByParticleID-0/set e- blue 
+#/vis/modeling/trajectories/drawByParticleID-0/set mu+ green 
+#/vis/modeling/trajectories/drawByParticleID-0/set e+ red 
+#/vis/modeling/trajectories/drawByParticleID-0/set gamma gray
+#/vis/modeling/trajectories/drawByParticleID-0/set nu_e yellow 
+#/vis/modeling/trajectories/drawByParticleID-0/set anti_nu_mu yellow 
 #
 /vis/scene/endOfEventAction accumulate
 #
