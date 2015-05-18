@@ -166,35 +166,22 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 
   logicWorld->SetVisAttributes(G4VisAttributes::Invisible);
 
-
-
   std::string line;
   std::string STLfile;
   std::string matname;
   int ID;
   int icad=0;
   char logical_name[100], physical_name[100];
-  //char name[80];
 
+  G4VisAttributes* VA = new G4VisAttributes(G4Color(0.8,0.8,0.8));
+  VA->SetForceSolid(true);
 
   for (std::map<std::string, std::string>::iterator i = geometryin["GEOMETRY"].begin(); i != geometryin["GEOMETRY"].end(); i++){ // parse STLfile list
-    //solid model;
-    //std::istringstream(i->first) >> model.ID;
     std::istringstream(i->first) >> ID;
-    //if (model.ID < 0){
-    //std::cout << "You defined a solid with ID " << model.ID << " < 0! IDs have to be larger than zero!\n";
     if (ID < 0){
       std::cout << "You defined a solid with ID " << ID << " < 0! IDs have to be larger than zero!\n";
       exit(-1);
     }
-    /*
-    for (std::vector<solid>::iterator j = solids.begin(); j != solids.end(); j++){
-      if (j->ID == model.ID){
-	std::cout << "You defined solids with identical ID " << model.ID << "! IDs have to be unique!\n";
-	exit(-1);
-      }
-    }
-    */
 
 
     std::istringstream ss(i->second);
@@ -204,12 +191,7 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 	if (STLfile == "igunored" ||STLfile == "Igunored")break;
 	if (matname == "default" ||matname == "Default")break;
 	if (matname == materials[j]){
-	  //model.mat = materials[i];
-	  //mat = materials[i];
-	  //if (model.ID > 1){
 	  if (ID > 1){
-	    //mesh.ReadFile(STLfile.c_str(),solids.size(),name);
-	    //model.name = name;
 	    offset = G4ThreeVector(0, 0, 0);
 	    std::cout<<"Reading: "<<STLfile<<std::endl;
 	    CADMesh *mesh = new CADMesh((char*)STLfile.c_str(), "STL", m, offset, false);
@@ -217,14 +199,13 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 	    sprintf(logical_name,"cad_logical_%d",icad);
 	    cad_logical[icad] = new G4LogicalVolume(cad_solid[icad], ucn_material[j], logical_name, 0, 0, 0);
 	    cad_logical[icad]->SetUserLimits(g4limit);
+	    cad_logical[icad]->SetVisAttributes(VA);
 	    sprintf(physical_name,"cad_physical_%d",icad);
 	    cad_physical[icad] = new G4PVPlacement(0, G4ThreeVector(), cad_logical[icad], physical_name, logicWorld, false, 0);
 	    icad++;
 
 
 	  }
-	  //else
-	  //model.name = "default solid";
 	  break;
 	}
 	else if (j+1 == materials.size()){
@@ -234,7 +215,6 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
       }
     }
     else{
-      // std::cout << "Could not load solid with ID " << model.ID << "! Did you define invalid parameters?\n";
       std::cout << "Could not load solid with ID " << ID << "! Did you define invalid parameters?\n";
       exit(-1);
     }
