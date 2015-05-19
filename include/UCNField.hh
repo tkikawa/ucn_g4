@@ -8,11 +8,13 @@
 #include "UCN3DField.hh"
 #include "UCNConductorField.hh"
 #include "UCNField.hh"
+#include "G4ElectroMagneticField.hh"
 
-
-class UCNField : public G4Field
+//class UCNField : public G4Field
+class UCNField : public G4ElectroMagneticField
 {
 public:
+
   UCNField(std::vector<TField*> FIELDS);
 
   virtual ~UCNField();
@@ -22,6 +24,7 @@ public:
   virtual G4bool DoesFieldChangeEnergy() const{ return true;}
 
   std::vector<TField*> fields;
+
 
 };
 

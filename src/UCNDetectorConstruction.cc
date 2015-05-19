@@ -172,7 +172,7 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
   std::string matname;
   int ID;
   int icad=0;
-  char logical_name[100], physical_name[100];
+  char solid_name[100], logical_name[100], physical_name[100];
 
   G4VisAttributes* VA = new G4VisAttributes(G4Color(0.8,0.8,0.8));
   VA->SetForceSolid(true);
@@ -198,12 +198,13 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 	    std::cout<<"Reading: "<<STLfile<<std::endl;
 	    CADMesh *mesh = new CADMesh((char*)STLfile.c_str(), "STL", m, offset, false);
 	    cad_solid[icad] = (G4VSolid*)mesh->TessellatedMesh();
-	    cad_union[icad] = new G4UnionSolid("cut_tube",cad_solid[icad], btmp, 0, G4ThreeVector(5*m, 5*m, 5*m));
-	    sprintf(logical_name,"cad_logical_%d",icad);
+	    sprintf(solid_name,"solid_%d",ID);
+	    cad_union[icad] = new G4UnionSolid(solid_name, cad_solid[icad], btmp, 0, G4ThreeVector(5*m, 5*m, 5*m));
+	    sprintf(logical_name,"logical_%d",ID);
 	    cad_logical[icad] = new G4LogicalVolume(cad_union[icad], ucn_material[j], logical_name, 0, 0, 0);
 	    cad_logical[icad]->SetUserLimits(g4limit);
 	    cad_logical[icad]->SetVisAttributes(VA);
-	    sprintf(physical_name,"cad_physical_%d",icad);
+	    sprintf(physical_name,"physical_%d",ID);
 	    cad_physical[icad] = new G4PVPlacement(0, G4ThreeVector(), cad_logical[icad], physical_name, logicWorld, false, 0);
 	    icad++;
 
@@ -260,7 +261,7 @@ void UCNDetectorConstruction::ConstructSDandField()
   if (!fField) {
 
     fField = new UCNField(fields);
-    fField->SetGravityActive(true);
+    //fField->SetGravityActive(true);
 
     G4RepleteEofM* equation = new G4RepleteEofM(fField);
     // G4EqGravityField* equation = new G4EqGravityField(fField);

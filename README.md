@@ -162,7 +162,7 @@ The endlog keeps track of the starting and end parameters of the particles simul
 - stopID: code which identifies how/in what geometry the particle ended 
   - 0: not categorized
   - -1: did not finish (reached max. simulation time)
-  - -2: hit outer poundaries
+  - -2: hit outer boundaries
   - -3: produced numerical error
   - -4: decayed
   - -5: found no initial position

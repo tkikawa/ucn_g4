@@ -3,6 +3,12 @@
 #include "UCNTrackingAction.hh"
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
+#include "G4Step.hh"
+#include "G4StepPoint.hh"
+#include "G4StepStatus.hh"
+#include "G4VProcess.hh"
+#include "G4ProcessType.hh"
+#include "G4VPhysicalVolume.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -64,8 +70,26 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   else                                 polend=-1;
   Hend = aTrack->GetTotalEnergy()/eV;
   Eend = aTrack->GetKineticEnergy()/eV;
-  
-  stopID=0;
+
+  stopID = 0;
+  if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessType() == fDecay){
+    stopID = -4;
+  }
+  else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fUserDefinedLimit){
+    stopID = -1;
+  }
+  else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fWorldBoundary){
+    stopID = -2;
+  }
+  else{
+    //phys_name = aTrack->GetNextVolume()->GetName();
+    phys_name = aTrack->GetStep()->GetPostStepPoint()->GetPhysicalVolume()->GetName();
+    strcpy(phys_vol, phys_name.c_str());
+    if(phys_vol != "World"){
+      stopID = atoi(phys_vol+9);
+    }
+  }
+
   NSpinflip=0;
   spinflipprob=0;
   ComputingTime=0;

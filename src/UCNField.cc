@@ -7,7 +7,6 @@
 #include "UCNConductorField.hh"
 #include "UCNField.hh"
 
-
 UCNField::UCNField(std::vector<TField*> FIELDS)
 {
   fields=FIELDS;
