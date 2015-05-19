@@ -23,6 +23,7 @@
 
 #include "G4Box.hh"
 //#include "G4Tubs.hh"
+#include "G4UnionSolid.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -184,6 +185,7 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
     }
 
 
+    G4Box *btmp = new G4Box("btmp",1*mm,1*mm,1*mm);
     std::istringstream ss(i->second);
     ss >> STLfile >> matname;
     if (ss){
@@ -196,8 +198,9 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 	    std::cout<<"Reading: "<<STLfile<<std::endl;
 	    CADMesh *mesh = new CADMesh((char*)STLfile.c_str(), "STL", m, offset, false);
 	    cad_solid[icad] = (G4VSolid*)mesh->TessellatedMesh();
+	    cad_union[icad] = new G4UnionSolid("cut_tube",cad_solid[icad], btmp, 0, G4ThreeVector(5*m, 5*m, 5*m));
 	    sprintf(logical_name,"cad_logical_%d",icad);
-	    cad_logical[icad] = new G4LogicalVolume(cad_solid[icad], ucn_material[j], logical_name, 0, 0, 0);
+	    cad_logical[icad] = new G4LogicalVolume(cad_union[icad], ucn_material[j], logical_name, 0, 0, 0);
 	    cad_logical[icad]->SetUserLimits(g4limit);
 	    cad_logical[icad]->SetVisAttributes(VA);
 	    sprintf(physical_name,"cad_physical_%d",icad);

@@ -54,7 +54,7 @@ For the installtion, [cmake](http://www.cmake.org/) is used. The cmake version n
   -DGEANT4_INSTALL_DATA=ON (install the additional data.)  
   -DGEANT4_USE_OPENGL_X11=ON (activate OpenGL.)  
   $G4INSTALL  
-- make (It takes a lot of time. If you'd like to compile with more than one core, input "make -j <number of cores>".)  
+- make (It takes a lot of time. If you'd like to compile with more than one core, input "make -j {number of cores}".)  
 - make install
 
 ### Installation of ASSIMP

@@ -45,4 +45,3 @@ void UCNField::GetFieldValue(const double Point[4],double *fieldArr) const
   fieldArr[4]=Ei[1]*volt/m;
   fieldArr[5]=Ei[2]*volt/m;
 }
-

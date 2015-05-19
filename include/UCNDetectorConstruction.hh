@@ -57,7 +57,7 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
 
 
   G4ThreeVector offset;
-  G4VSolid *cad_solid[300];
+  G4VSolid *cad_solid[300], *cad_union[300];
   G4LogicalVolume *cad_logical[300];
   G4VPhysicalVolume *cad_physical[300];
  
