@@ -2,6 +2,7 @@
 #define UCNActionInitialization_h 1
 
 #include "UCNGlobals.hh"
+#include "UCNDetectorConstruction.hh"
 
 #include "G4VUserActionInitialization.hh"
 
@@ -15,14 +16,21 @@ public:
 
   TConfig particlein;
   TConfig geometryin;
-
   int secondaries;
+  UCNDetectorConstruction* dtc;
 
-  UCNActionInitialization(int JOBNUM, std::string OUTPATH, int SECON, TConfig GEOMIN, TConfig PARIN);
+  bool loginfo[5];
+  double trackloginterval;
+  std::vector<double> snaptime;
+
+
+  UCNActionInitialization(int JOBNUM, std::string OUTPATH, int SECON, TConfig GEOMIN, TConfig PARIN, UCNDetectorConstruction* DTC);
   virtual ~UCNActionInitialization();
   
   virtual void BuildForMaster() const;
   virtual void Build() const;
+
+  void ReadLogInfo(TConfig conf);
   
   //private:
 

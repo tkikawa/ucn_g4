@@ -17,6 +17,8 @@ public:
 
   UCNField(std::vector<TField*> FIELDS);
 
+  void GetCurrentFieldValue(const double t, const double x, const double y, const double z, double B[4][4], double *Ei, double &V);
+
   virtual ~UCNField();
   
   virtual void GetFieldValue( const  double Point[4],

@@ -55,7 +55,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-UCNDetectorConstruction::UCNDetectorConstruction(int SIMTIME, TConfig GEOMIN)
+UCNDetectorConstruction::UCNDetectorConstruction(double SIMTIME, TConfig GEOMIN)
 //UCNDetectorConstruction::UCNDetectorConstruction()
  : fVacuum(0)
 {
@@ -63,6 +63,7 @@ UCNDetectorConstruction::UCNDetectorConstruction(int SIMTIME, TConfig GEOMIN)
   DefineMaterials();
   ReadInField(geometryin);
   g4limit = new G4UserLimits(DBL_MAX,DBL_MAX,SIMTIME*s);
+  fField = 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -252,8 +253,6 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-G4ThreadLocal UCNField* UCNDetectorConstruction::fField = 0;
 
 
 void UCNDetectorConstruction::ConstructSDandField()

@@ -12,12 +12,15 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-UCNTrackingAction::UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON)
+UCNTrackingAction::UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON, UCNDetectorConstruction* DTC, bool ENDLOG)
 {
   secondaries=SECON;
   jobnumber=JOBNUM;
   outpath = OUTPATH;
+  dtc = DTC;
   runman =  G4RunManager::GetRunManager();
+  issnapshot = false;
+  endlog = ENDLOG;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -38,6 +41,8 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
     fpTrackingManager->SetStoreTrajectory(true);
   }
 
+  issnapshot = false;
+
   particle = runman->GetCurrentEvent()->GetEventID();
   tstart = aTrack->GetGlobalTime()/s;
   xstart = (aTrack->GetPosition()/m)[0];
@@ -48,9 +53,15 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   vzstart = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[2];
   if((aTrack->GetPolarization())[1]>0) polstart=1;
   else                                 polstart=-1;
-  Hstart = aTrack->GetTotalEnergy()/eV;
+
+  dtc->GetField()->GetCurrentFieldValue(tstart, xstart, ystart, zstart, B, Ei, V);
+  Hstart = aTrack->GetKineticEnergy()/eV  + Epot(aTrack, V, polstart, B[3][0], zstart);
   Estart = aTrack->GetKineticEnergy()/eV;
 
+  start_t = clock();
+  NSpinflip = 0;
+  Nhit = 0;
+  Hmax = 0;
 }
 
 
@@ -68,7 +79,9 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   vzend = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[2];
   if((aTrack->GetPolarization())[1]>0) polend=1;
   else                                 polend=-1;
-  Hend = aTrack->GetTotalEnergy()/eV;
+
+  dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
+  Hend = aTrack->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], zend);
   Eend = aTrack->GetKineticEnergy()/eV;
 
   stopID = 0;
@@ -90,15 +103,13 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     }
   }
 
-  NSpinflip=0;
-  spinflipprob=0;
-  ComputingTime=0;
-  Nhit=0;
-  
+  end_t = clock();
+  ComputingTime = (double)(end_t - start_t)/CLOCKS_PER_SEC;
+
   Nstep      = aTrack->GetCurrentStepNumber();
   trajlength = aTrack->GetTrackLength()/m;
-  
-  Hmax=0;
+
+  spinflipprob=0;  
 
   pid = aTrack->GetDefinition()->GetPDGEncoding();
   if(pid==2112)      {pid=0;name="neutron";}
@@ -106,23 +117,41 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   else if(pid==11)   {pid=2;name="electron";}
   else               return;
 
-  if (!file[pid].is_open())OpenFile();
-  PrintData();
+  if(endlog||issnapshot){
+    if (!file[pid][issnapshot].is_open())OpenFile();
+    PrintData();
+  }
 
 }
 
-void UCNTrackingAction::OpenFile(){
+void UCNTrackingAction::SnapShotAction(const G4Track* aTrack)
+{
+  issnapshot=true;
+  PostUserTrackingAction(aTrack);
+  issnapshot=false;
+}
 
-  std::string filesuffix = "end.out";
+
+void UCNTrackingAction::StepAction(double H, bool Spinflip, bool hit)
+{
+  if(Spinflip) NSpinflip++;
+  if(hit) Nhit++;
+  if(H>Hmax) Hmax = H;
+}
+
+void UCNTrackingAction::OpenFile(){
+  std::string filesuffix;
+  if(issnapshot) filesuffix = "snapshot.out";
+  else           filesuffix = "end.out";
   std::ostringstream filename;
   filename << outpath << '/' << std::setw(12) << std::setfill('0') << jobnumber << name << filesuffix;
   std::cout << "Creating " << filename.str() << '\n';
-  file[pid].open(filename.str().c_str());
-  if (!file[pid].is_open()){
+  file[pid][issnapshot].open(filename.str().c_str());
+  if (!file[pid][issnapshot].is_open()){
     std::cout << "Could not create" << filename.str() << '\n';
     exit(-1);
   }
-  file[pid] << "jobnumber particle "
+  file[pid][issnapshot] << "jobnumber particle "
     "tstart xstart ystart zstart "
     "vxstart vystart vzstart "
     "polstart Hstart Estart "
@@ -130,19 +159,27 @@ void UCNTrackingAction::OpenFile(){
     "vxend vyend vzend "
     "polend Hend Eend stopID Nspinflip spinflipprob "
     "ComputingTime Nhit Nstep trajlength Hmax\n";
-  file[pid].precision(10);
+  file[pid][issnapshot].precision(10);
 }
 
 void UCNTrackingAction::PrintData(){
 
-  file[pid] << jobnumber << " " << particle << " "
-	    << tstart << " " << xstart << " " << ystart << " " << zstart << " "
-	    << vxstart << " " << vystart << " " << vzstart << " "
-	    << polstart << " " << Hstart << " " << Estart << " "
-	    << tend << " " << xend << " " << yend << " " << zend << " "
-	    << vxend << " " << vyend << " " << vzend << " "
-	    << polend << " " << Hend << " " << Eend << " " << stopID << " " << NSpinflip << " " << spinflipprob << " "
-	    << ComputingTime << " " << Nhit << " " << Nstep << " " << trajlength << " " << Hmax << '\n';
+  file[pid][issnapshot] << jobnumber << " " << particle << " "
+			<< tstart << " " << xstart << " " << ystart << " " << zstart << " "
+			<< vxstart << " " << vystart << " " << vzstart << " "
+			<< polstart << " " << Hstart << " " << Estart << " "
+			<< tend << " " << xend << " " << yend << " " << zend << " "
+			<< vxend << " " << vyend << " " << vzend << " "
+			<< polend << " " << Hend << " " << Eend << " " << stopID << " " << NSpinflip << " " << spinflipprob << " "
+			<< ComputingTime << " " << Nhit << " " << Nstep << " " << trajlength << " " << Hmax << '\n';
   
 
+}
+
+double UCNTrackingAction::Epot(const G4Track* theTrack, double v, double pol, double b, double z){
+  double epot = 
+    (theTrack->GetDefinition()->GetPDGCharge()/coulomb)/ele_e*v
+    - pol*(theTrack->GetDefinition()->GetPDGMagneticMoment()/(joule/tesla))/ele_e*b
+    + (theTrack->GetDefinition()->GetPDGMass()/eV/c_0/c_0)*gravconst*z;
+  return epot;
 }

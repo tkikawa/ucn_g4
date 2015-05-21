@@ -26,6 +26,7 @@ static const long double gravconst = 9.80665L; ///< g [m/s]
 //static const long double conv = pi/180.L; ///< deg to rad conversion factor
 static const long double conv = 3.1415926535897932384626L/180.L; ///< deg to rad conversion factor
 //static const long double mu0 = 4*pi*1e-7L; ///< magnetic permeability [Vs/Am]
+static const long double Mu0 = 4*pi*1e-7L; ///< magnetic permeability [Vs/Am]
 static const long double m_n = 1.674927211E-27L/ele_e; ///< neutron mass [eV/c^2]
 static const long double m_p = 1.672621637E-27L/ele_e; ///< proton mass [eV/c^2]
 static const long double m_e = 9.10938215e-31L/ele_e; ///< electron mass [eV/c^2]
@@ -115,10 +116,6 @@ void ReadInFile(const char *inpath, TConfig &vars);
 
 
 
-
-
-
-
 class TField{
 public:
   /**
@@ -158,11 +155,6 @@ public:
    */
   virtual ~TField(){ };
 };
-
-
-
-
-
 
 
 #endif /*GLOBALS_H_*/

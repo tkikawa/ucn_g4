@@ -17,7 +17,7 @@ TFiniteWire::TFiniteWire(double SW1xx, double SW1yy, double SW1zz, double SW2xx,
 
 void TFiniteWire::BField(const double x, const double y, const double z, double t, double B[4][4])
 {
-	double vorfaktor = mu0 * I / (4 * pi);
+	double vorfaktor = Mu0 * I / (4 * pi);
 
 	double t1 = SW2z * SW2z;
 	double t2 = z * z;
@@ -156,7 +156,7 @@ TFiniteWireX::TFiniteWireX(double SW1xx, double SW2xx, double SWzz, double aI): 
 
 void TFiniteWireX::BField(const double x, const double y, const double z, double t, double B[4][4])
 {
-	double vorfaktor = mu0 * I / (4 * pi);
+	double vorfaktor = Mu0 * I / (4 * pi);
 
 
 	double t1 = SW2x * SW2x;
@@ -224,7 +224,7 @@ TFiniteWireY::TFiniteWireY(double SW1yy, double SW2yy, double SWzz, double aI): 
 
 void TFiniteWireY::BField(const double x, const double y, const double z, double t, double B[4][4])
 {
-	double vorfaktor = mu0 * I / (4 * pi);
+	double vorfaktor = Mu0 * I / (4 * pi);
 
 	double t1 = SWz * SWz;
 	double t3 = 2 * SWz * z;
@@ -288,7 +288,7 @@ TFiniteWireZ::TFiniteWireZ(double SWxx, double SWyy, double SW1zz, double SW2zz,
 
 void TFiniteWireZ::BField(const double x, const double y, const double z, double t, double B[4][4])
 {
-	double vorfaktor = mu0 * I / (4 * pi);
+	double vorfaktor = Mu0 * I / (4 * pi);
 
 	double t1 = SWx * SWx;
 	double t3 = 2 * SWx * x;
@@ -360,7 +360,7 @@ TFiniteWireZCenter::TFiniteWireZCenter(double SW1zz, double SW2zz, double aI): T
 
 void TFiniteWireZCenter::BField(const double x, const double y, const double z, double t, double B[4][4]){
 
-	double vorfaktor = mu0 * I / (4 * pi);
+	double vorfaktor = Mu0 * I / (4 * pi);
 
 	double t1 = x * x;
 	double t2 = y * y;
@@ -425,7 +425,7 @@ TFullRacetrack::TFullRacetrack(double SW1zz, double SW2zz, double SWrr, double a
 
 
 void TFullRacetrack::BField(double x, double y, double z, double t, double B[4][4]){
-	double vorfaktor = mu0 * I / (4 * pi);
+	double vorfaktor = Mu0 * I / (4 * pi);
 
 	double t1 = x * x;
 	double t2 = y * y;
@@ -861,7 +861,7 @@ TInfiniteWireZ::TInfiniteWireZ(double lxx, double lyy, double aI): TConductorFie
 void TInfiniteWireZ::BField(double x,double y,double z, double t, double B[4][4]){
 	// cartesian coordinates of neutron
 	// cartesian coordinates of racetracks
-	double vorfaktor = mu0 * I / (2 * pi);
+	double vorfaktor = Mu0 * I / (2 * pi);
 
 	double t1 = ly - y;
 	double t2 = vorfaktor * t1;
@@ -893,7 +893,7 @@ TInfiniteWireZCenter::TInfiniteWireZCenter(double aI): TConductorField(aI){
 
 void TInfiniteWireZCenter::BField(const double x, const double y, const double z, double t, double B[4][4]){
 
-	double vorfaktor = mu0 * I / (2 * pi);
+	double vorfaktor = Mu0 * I / (2 * pi);
 	double r2 = x*x + y*y;
 	B[0][0] += vorfaktor*y/r2;
 	B[0][1] += -2*vorfaktor*x*y/r2/r2;

@@ -13,7 +13,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 //UCNPrimaryGeneratorAction::UCNPrimaryGeneratorAction(void)
-UCNPrimaryGeneratorAction::UCNPrimaryGeneratorAction(int secondaries, TConfig GEOMIN, TConfig PARTIN)
+UCNPrimaryGeneratorAction::UCNPrimaryGeneratorAction(TConfig GEOMIN, TConfig PARTIN)
 {
   geometryin=GEOMIN;
   particlein=PARTIN;

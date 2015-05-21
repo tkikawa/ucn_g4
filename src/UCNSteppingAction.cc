@@ -10,11 +10,21 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
 
-UCNSteppingAction::UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON)
+UCNSteppingAction::UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON, UCNTrackingAction* TAC, UCNDetectorConstruction* DTC, const bool *LOGINFO, double TRKLOGINT, const std::vector<double> &SNAPTIME)
 {
   secondaries=SECON;
   jobnumber=JOBNUM;
   outpath = OUTPATH;
+  tac = TAC;
+  dtc = DTC;
+  endlog = LOGINFO[0];
+  tracklog = LOGINFO[1];
+  hitlog = LOGINFO[2];
+  snapshotlog = LOGINFO[3];
+  spinlog = LOGINFO[4];
+  trackloginterval = TRKLOGINT;
+  snaptime = SNAPTIME;
+
   runman =  G4RunManager::GetRunManager();
 }
 
@@ -42,8 +52,21 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   vz = (theTrack->GetVelocity()/(m/s))*(theTrack->GetMomentumDirection())[2];
   if((theTrack->GetPolarization())[1]>0) polarisation=1;
   else                                   polarisation=-1;
-  H = theTrack->GetTotalEnergy()/eV;
+
+  dtc->GetField()->GetCurrentFieldValue(t, x, y, z, B, Ei, V);
+  
+  H = theTrack->GetKineticEnergy()/eV + tac->Epot(theTrack, V, polarisation, B[3][0], z);
   E = theTrack->GetKineticEnergy()/eV;
+
+  pre_pol = (theStep->GetPreStepPoint()->GetPolarization())[1];
+  post_pol = (theStep->GetPostStepPoint()->GetPolarization())[1];
+  pre_phys_name = theStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+  post_phys_name = theStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();
+  if(pre_pol*post_pol<0) Spinflip = true;
+  else Spinflip = false;
+  if(pre_phys_name == "World" && post_phys_name != "World") hit = true;
+  else hit = false;
+  tac->StepAction(H, Spinflip, hit);
 
   pid = theTrack->GetDefinition()->GetPDGEncoding();
   if(pid==2112)      {pid=0;name="neutron";}
@@ -51,29 +74,20 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   else if(pid==11)   {pid=2;name="electron";}
   else               return;
 
-  if (!trackfile[pid].is_open())OpenFile();
-  PrintData();
+  if(snapshotlog){
+    double t0 = theStep->GetPreStepPoint()->GetGlobalTime()/s;
+    double t1 = theStep->GetPostStepPoint()->GetGlobalTime()/s;
+    for(unsigned int i=0;i<snaptime.size();i++){
+      if(t0<snaptime[i]&&snaptime[i]<t1){
+	tac->SnapShotAction(theTrack);
+      }
+    }
+  }
 
-  /*
-  // check if it is NOT muon
-  G4ParticleDefinition * particleType = theTrack->GetDefinition();
-  if((particleType==G4MuonPlus::MuonPlusDefinition())
-   ||(particleType==G4MuonMinus::MuonMinusDefinition()))
-  { return; }
-
-  // check if it is entering to the calorimeter volume
-  G4StepPoint * thePrePoint = theStep->GetPreStepPoint();
-  G4VPhysicalVolume * thePrePV = thePrePoint->GetPhysicalVolume();
-  G4String thePrePVname = thePrePV->GetName();
-  if(thePrePVname(0,4)=="calo") { return; }
-  G4StepPoint * thePostPoint = theStep->GetPostStepPoint();
-  G4VPhysicalVolume * thePostPV = thePostPoint->GetPhysicalVolume();
-  G4String thePostPVname = thePostPV->GetName();
-  if(thePostPVname(0,4)!="calo") { return; }
-
-  // then suspend the track
-  theTrack->SetTrackStatus(fSuspend);
-  */
+  if(tracklog){
+    if (!trackfile[pid].is_open())OpenFile();
+    PrintData();
+  }
 
 }
 
