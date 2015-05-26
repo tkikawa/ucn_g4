@@ -16,6 +16,7 @@ class UCNSteppingAction : public G4UserSteppingAction
   G4RunManager *runman;
 
   std::ofstream trackfile[3];
+  std::ofstream hitfile[3];
   int pid;
 
   int secondaries;
@@ -26,6 +27,12 @@ class UCNSteppingAction : public G4UserSteppingAction
   int particle, polarisation;
   double t, x, y, z, vx, vy, vz, H, E;
   double B[4][4], Ei[3], V;
+
+  double v1x, v1y, v1z, v2x, v2y, v2z, nx, ny, nz;
+  int pol1, pol2, solid1, solid2;
+
+  char phys_vol1[20], phys_vol2[20];
+  std::string phys_name1, phys_name2;
 
   UCNDetectorConstruction* dtc;
 
@@ -45,6 +52,8 @@ class UCNSteppingAction : public G4UserSteppingAction
 
   void OpenFile();
   void PrintData();
+  void OpenHitFile();
+  void PrintHitData();
 
 };
 

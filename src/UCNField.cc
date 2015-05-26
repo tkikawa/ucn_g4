@@ -36,12 +36,23 @@ void UCNField::GetFieldValue(const double Point[4],double *fieldArr) const
     (*i)->BField(x, y, z, t, B);
     (*i)->EField(x, y, z, t, V, Ei);
   }
+  /*
   fieldArr[0]=B[0][0]*tesla;
   fieldArr[1]=B[1][0]*tesla;
   fieldArr[2]=B[2][0]*tesla;
   fieldArr[3]=Ei[0]*volt/m;
   fieldArr[4]=Ei[1]*volt/m;
   fieldArr[5]=Ei[2]*volt/m;
+  */
+  fieldArr[0]=0;
+  fieldArr[1]=0;
+  fieldArr[2]=-9.81*m/s/s;
+  fieldArr[3]=B[0][0]*tesla;
+  fieldArr[4]=B[1][0]*tesla;
+  fieldArr[5]=B[2][0]*tesla;
+  fieldArr[6]=Ei[0]*volt/m;
+  fieldArr[7]=Ei[1]*volt/m;
+  fieldArr[8]=Ei[2]*volt/m;
 }
 
 void UCNField::GetCurrentFieldValue(const double t, const double x, const double y, const double z, double B[4][4], double *Ei, double &V)

@@ -260,7 +260,7 @@ void UCNDetectorConstruction::ConstructSDandField()
   if (!fField) {
 
     fField = new UCNField(fields);
-    //fField->SetGravityActive(true);
+    fField->SetGravityActive(true);
 
     G4RepleteEofM* equation = new G4RepleteEofM(fField);
     // G4EqGravityField* equation = new G4EqGravityField(fField);

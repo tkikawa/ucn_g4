@@ -74,6 +74,40 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   else if(pid==11)   {pid=2;name="electron";}
   else               return;
 
+  if(hitlog){
+    if(pre_phys_name != post_phys_name){
+      
+      v1x = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
+	* (theStep->GetPreStepPoint()->GetMomentumDirection())[0];
+      v1y = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
+	* (theStep->GetPreStepPoint()->GetMomentumDirection())[1];
+      v1z = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
+	* (theStep->GetPreStepPoint()->GetMomentumDirection())[2];
+      if((theStep->GetPreStepPoint()->GetPolarization())[1]>0) pol1 = 1;
+      else pol1 = -1;
+
+      v2x = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
+	* (theStep->GetPostStepPoint()->GetMomentumDirection())[0];
+      v2y = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
+	* (theStep->GetPostStepPoint()->GetMomentumDirection())[1];
+      v2z = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
+	* (theStep->GetPostStepPoint()->GetMomentumDirection())[2];
+      if((theStep->GetPostStepPoint()->GetPolarization())[1]>0) pol2 = 1;
+      else pol2 = -1;
+
+      phys_name1 = theStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
+      strcpy(phys_vol1, phys_name1.c_str());
+      solid1 = atoi(phys_vol1+9);
+
+      phys_name2 = theStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();
+      strcpy(phys_vol2, phys_name2.c_str());
+      solid2 = atoi(phys_vol2+9);
+
+      if (!hitfile[pid].is_open())OpenHitFile();
+      PrintHitData();
+    }
+  }
+
   if(snapshotlog){
     double t0 = theStep->GetPreStepPoint()->GetGlobalTime()/s;
     double t1 = theStep->GetPostStepPoint()->GetGlobalTime()/s;
@@ -119,5 +153,35 @@ void UCNSteppingAction::PrintData(){
     for (int j = 0; j < 4; j++)
       trackfile[pid] << B[i][j] << " ";
   trackfile[pid] << Ei[0] << " " << Ei[1] << " " << Ei[2] << " " << V << '\n';
+
+}
+
+
+void UCNSteppingAction::OpenHitFile(){
+
+  std::string filesuffix = "hit.out";
+  std::ostringstream filename;
+  filename << outpath << '/' << std::setw(12) << std::setfill('0') << jobnumber << name << filesuffix;
+  std::cout << "Creating " << filename.str() << '\n';
+  hitfile[pid].open(filename.str().c_str());
+  if (!hitfile[pid].is_open()){
+    std::cout << "Could not create" << filename.str() << '\n';
+    exit(-1);
+  }
+  hitfile[pid] << "jobnumber particle "
+    "t x y z v1x v1y v1z pol1 "
+    "v2x v2y v2z pol2 "
+    "nx ny nz solid1 solid2\n";
+  hitfile[pid].precision(10);
+  
+}
+
+void UCNSteppingAction::PrintHitData(){
+
+  hitfile[pid] << jobnumber << " " << particle << " " << polarisation << " "
+	       << t << " " << x << " " << y << " " << z << " " << v1x << " "
+	       << v1y << " " << v1z << " " << pol1 << " "<< v1x << " "
+	       << v2y << " " << v2z << " " << pol2 << " "<<nx<< " "<<ny<< " "
+	       <<nz<< " " <<solid1<< " " <<solid2<< '\n';
 
 }
