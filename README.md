@@ -83,7 +83,7 @@ For the installtion, [cmake](http://www.cmake.org/) is used. The cmake version n
 - make install  
 
 ### Installation of this simulation code
-- (Edit the directory settings in CMakeLists.txt if you installed the abeve libraries in other directories than defaults.)  
+- (Edit the directory settings in CMakeLists.txt if you installed the above libraries in other directories than defaults.)  
 - mkdir build  
 - cd build  
 - cmake ../  

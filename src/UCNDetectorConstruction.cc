@@ -46,6 +46,7 @@
 #include "G4TransportationManager.hh"
 
 #include "G4RepleteEofM.hh"
+//#include "G4EqMagElectricField.hh"
 //#include "G4EqGravityField.hh"
 
 #include "G4ClassicalRK4.hh"
@@ -63,7 +64,7 @@ UCNDetectorConstruction::UCNDetectorConstruction(double SIMTIME, TConfig GEOMIN)
   DefineMaterials();
   ReadInField(geometryin);
   g4limit = new G4UserLimits(DBL_MAX,DBL_MAX,SIMTIME*s);
-  fField = 0;
+  fieldIsInitialized = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -107,21 +108,24 @@ void UCNDetectorConstruction::DefineMaterials()
       mattbl[imat]->AddConstProperty("LOSS",FermiImag/FermiReal);
       mattbl[imat]->AddConstProperty("DIFFUSION",DiffProb);
       mattbl[imat]->AddConstProperty("SPINFLIP",SpinflipProb);
-      mattbl[imat]->AddConstProperty("MR_RRMS", RMSRoughness*m);
-      mattbl[imat]->AddConstProperty("MR_CORRLEN", CorrelLength*m);
 
       mattbl[imat]->AddConstProperty("REFLECTIVITY",1.);
       mattbl[imat]->AddConstProperty("LOSSCS",0.);
       mattbl[imat]->AddConstProperty("ABSCS",abscs);
       mattbl[imat]->AddConstProperty("SCATCS",scatcs);
 
-      mattbl[imat]->SetMicroRoughnessParameters(CorrelLength*m,
-						RMSRoughness*m,
-						180, 1000,
-						0*degree, 90*degree,
-						1*neV, 1000*neV,
-						15, 15,
-						0.01*degree);
+      if(UseMRModel){
+	mattbl[imat]->AddConstProperty("MR_RRMS", RMSRoughness*m);
+	mattbl[imat]->AddConstProperty("MR_CORRLEN", CorrelLength*m);	
+	mattbl[imat]->SetMicroRoughnessParameters(CorrelLength*m,
+						  RMSRoughness*m,
+						  180, 1000,
+						  0*degree, 90*degree,
+						  1*neV, 1000*neV,
+						  15, 15,
+						  0.01*degree);
+      }
+      
       ucn_material[imat]->SetMaterialPropertiesTable(mattbl[imat]);
       materials.push_back(material_name);
       imat++;
@@ -257,19 +261,21 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 
 void UCNDetectorConstruction::ConstructSDandField()
 {
-  if (!fField) {
+  if (!fieldIsInitialized) {
 
     fField = new UCNField(fields);
     fField->SetGravityActive(true);
 
     G4RepleteEofM* equation = new G4RepleteEofM(fField);
-    // G4EqGravityField* equation = new G4EqGravityField(fField);
+    equation->SetBField();
+    equation->SetEField();
+    equation->SetgradB();
+    equation->SetSpin();
 
     G4FieldManager* fieldManager
       = G4TransportationManager::GetTransportationManager()->GetFieldManager();
     fieldManager->SetDetectorField(fField);
-
-
+    
     // Set 12 to activate the spin tracking
     G4MagIntegratorStepper* stepper = new G4ClassicalRK4(equation,12);
     // G4MagIntegratorStepper* stepper = new G4ClassicalRK4(equation,8);
@@ -277,9 +283,10 @@ void UCNDetectorConstruction::ConstructSDandField()
     G4double minStep           = 0.01*mm;
     
     G4ChordFinder* chordFinder = 
-                   new G4ChordFinder((G4MagneticField*)fField,minStep,stepper);
-
+      new G4ChordFinder((G4MagneticField*)fField,minStep,stepper);
+    
     // Set accuracy parameters
+
     G4double deltaChord        = 3.0*mm;
     chordFinder->SetDeltaChord( deltaChord );
     
@@ -288,20 +295,22 @@ void UCNDetectorConstruction::ConstructSDandField()
     
     G4double deltaIntersection = 0.1*mm;
     fieldManager->SetDeltaIntersection(deltaIntersection);
-
-    G4TransportationManager* transportManager =
-                           G4TransportationManager::GetTransportationManager();
     
-     G4PropagatorInField* fieldPropagator =
-                                      transportManager->GetPropagatorInField();
+    G4TransportationManager* transportManager =
+      G4TransportationManager::GetTransportationManager();
+      
+    G4PropagatorInField* fieldPropagator =
+      transportManager->GetPropagatorInField();
+      
+    G4double epsMin            = 2.5e-7*mm;
+    G4double epsMax            = 0.05*mm;
+    
+    fieldPropagator->SetMinimumEpsilonStep(epsMin);
+    fieldPropagator->SetMaximumEpsilonStep(epsMax);
 
-     G4double epsMin            = 2.5e-7*mm;
-     G4double epsMax            = 0.05*mm;
-
-     fieldPropagator->SetMinimumEpsilonStep(epsMin);
-     fieldPropagator->SetMaximumEpsilonStep(epsMax);
-
-     fieldManager->SetChordFinder(chordFinder);
+    fieldManager->SetChordFinder(chordFinder);
+    
+    fieldIsInitialized = true;
   }
 }
 

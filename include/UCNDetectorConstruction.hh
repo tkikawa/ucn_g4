@@ -44,8 +44,9 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
 
   double a, cohcs, incohcs, scatcs, abscs, density, fermipot, loss;
 
+  bool fieldIsInitialized;
+
   UCNDetectorConstruction(double SIMTIME, TConfig GEOMIN);
-  //UCNDetectorConstruction();
   virtual ~UCNDetectorConstruction();
 
   public:
@@ -66,7 +67,6 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
 
 public:
   
-  //static G4ThreadLocal UCNField* fField;
   UCNField* fField;
   UCNField* GetField(){return fField;}
   

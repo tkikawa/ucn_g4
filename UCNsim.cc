@@ -118,6 +118,10 @@ int main(int argc,char** argv)
     op++;
   }
 
+  clock_t start_time, end_time;
+  start_time = clock();
+
+
   TConfig configin;
   ReadInFile(std::string(inpath + "/config.in").c_str(), configin);
   TConfig geometryin;
@@ -169,13 +173,16 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new UCNDetectorConstruction(SimTime, geometryin));
+  //runManager->SetUserInitialization(new UCNDetectorConstruction(SimTime, geometryin));
+
+  UCNDetectorConstruction* dtc = new UCNDetectorConstruction(SimTime, geometryin);
+  runManager->SetUserInitialization(dtc);
   G4cout << "Detector init. OK!" << G4endl;
   // Physics list
   runManager->SetUserInitialization(new UCNPhysicsList());
   G4cout << "PhysicsList init. OK!" << G4endl;
   // User action initialization
-  runManager->SetUserInitialization(new UCNActionInitialization(jobnumber, outpath, secondary, geometryin, particlein));
+  runManager->SetUserInitialization(new UCNActionInitialization(jobnumber, outpath, secondary, geometryin, particlein, dtc));
   G4cout << "Action init. OK!" << G4endl;
 
   // Initialize G4 kernel
@@ -202,7 +209,6 @@ int main(int argc,char** argv)
   else
   {
     // normal mode
-    //runManager->BeamOn(1);
     runManager->BeamOn(simcount);
   }
   
@@ -211,6 +217,15 @@ int main(int argc,char** argv)
 #endif
   delete runManager;
 
+
+  end_time = clock();
+  clock_t time_hour, time_min, time_sec;
+  time_sec = (end_time - start_time)/CLOCKS_PER_SEC;
+  time_min = time_sec / 60;
+  time_sec = time_sec % 60;
+  time_hour = time_min / 60;
+  time_min = time_min % 60;
+  G4cout << "Simulation time: "<<time_hour <<"h"<< time_min <<"m"<< time_sec <<"s"<< G4endl;
   G4cout << "All finished. \\(^o^)/" << G4endl;
 
   return 0;
