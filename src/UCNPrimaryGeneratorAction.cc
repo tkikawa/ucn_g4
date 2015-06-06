@@ -40,12 +40,9 @@ UCNPrimaryGeneratorAction::~UCNPrimaryGeneratorAction()
 void UCNPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // This function is called at the begining of event
-
-
   t = G4UniformRand() * ActiveTime * s;
   fParticleGun->SetParticleTime(t);
   RandomPointInSourceVolume();
-  //fParticleGun->SetParticlePosition(G4ThreeVector(0.0, 0.0, 0.0));
   fParticleGun->SetParticlePosition(G4ThreeVector(X, Y, Z));
   polarization = DicePolarisation(ParticleName);
   fParticleGun->SetParticlePolarization(G4ThreeVector(0,polarization,0));
@@ -57,38 +54,9 @@ void UCNPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   py = std::cos(theta);  
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
   fParticleGun->GeneratePrimaryVertex(anEvent);
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-/*
-void UCNPrimaryGeneratorAction::ConfigInit(std::map<std::string, std::string> conf){
- 
-  //float nextsnapshot = -1;
-  snapshotlog = false;
-  std::istringstream(conf["snapshotlog"]) >> snapshotlog;
-  //std::istringstream snapshots(conf["snapshots"]);
-  if (snapshotlog){
-    //do{
-    //snapshots >> nextsnapshot;
-    //}while (snapshots.good() && nextsnapshot < x); // find first snapshot time
-    std::cout<<"Snapshot is not available.\n";
-  }
-
-  tracklog = false;
-  std::istringstream(conf["tracklog"]) >> tracklog;
-  trackloginterval = 1e-3;
-  std::istringstream(conf["trackloginterval"]) >> trackloginterval;
-
-  hitlog = false;
-  std::istringstream(conf["hitlog"]) >> hitlog;
-
-  std::istringstream(conf["flipspin"]) >> flipspin;
-
-
-}
-*/
 
 void UCNPrimaryGeneratorAction::ConfigInit(TConfig conf){
   for (TConfig::iterator i = conf.begin(); i != conf.end(); i++){

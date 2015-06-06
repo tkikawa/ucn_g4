@@ -27,19 +27,22 @@ UCNActionInitialization::~UCNActionInitialization()
 
 void UCNActionInitialization::BuildForMaster() const
 {
-  SetUserAction(new UCNRunAction());
+  UCNRunAction* rac = new UCNRunAction();
+  SetUserAction(rac);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void UCNActionInitialization::Build() const
 {
-  SetUserAction(new UCNPrimaryGeneratorAction(geometryin, particlein));
-
-  SetUserAction(new UCNRunAction());
-  UCNTrackingAction *tac = new UCNTrackingAction(jobnumber, outpath, secondaries, dtc, loginfo[0]);
+  UCNPrimaryGeneratorAction* gac = new UCNPrimaryGeneratorAction(geometryin, particlein);
+  SetUserAction(gac);
+  UCNRunAction* rac = new UCNRunAction();
+  SetUserAction(rac);
+  UCNTrackingAction* tac = new UCNTrackingAction(jobnumber, outpath, secondaries, dtc, loginfo[0]);
   SetUserAction(tac);
-  SetUserAction(new UCNSteppingAction(jobnumber, outpath, secondaries, tac, dtc, loginfo, trackloginterval, snaptime));
+  UCNSteppingAction* sac = new UCNSteppingAction(jobnumber, outpath, secondaries, tac, dtc, loginfo, trackloginterval, snaptime);
+  SetUserAction(sac);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -70,5 +73,4 @@ void UCNActionInitialization::ReadLogInfo(TConfig conf)
   loginfo[2] = hitlog;
   loginfo[3] = snapshotlog;
   loginfo[4] = spinlog;
-
 }

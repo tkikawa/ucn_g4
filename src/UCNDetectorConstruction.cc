@@ -189,7 +189,7 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
       exit(-1);
     }
 
-
+    int mid;
     G4Box *btmp = new G4Box("btmp",1*mm,1*mm,1*mm);
     std::istringstream ss(i->second);
     ss >> STLfile >> matname;
@@ -198,6 +198,7 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 	if (STLfile == "igunored" ||STLfile == "Igunored")break;
 	if (matname == "default" ||matname == "Default")break;
 	if (matname == materials[j]){
+	  mid=j;
 	  if (ID > 1){
 	    offset = G4ThreeVector(0, 0, 0);
 	    std::cout<<"Reading: "<<STLfile<<std::endl;
@@ -228,18 +229,18 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
       exit(-1);
     }
 
-
-    double ignorestart, ignoreend;
+    ignore ig;
     while (ss){
-      ss >> ignorestart;
-      if (!ss) // no more ignore times found                                                                                       
+      ss >> ig.ignorestart;
+      if (!ss) // no more ignore times found
 	break;
       char dash;
       ss >> dash;
-      ss >> ignoreend;
+      ss >> ig.ignoreend;
       if (ss && dash == '-'){
-	//model.ignoretimes.push_back(ignorestart);
-	//model.ignoretimes.push_back(ignoreend);
+	ig.stlid=icad;
+	ig.matid=mid;
+	ignores.push_back(ig);
       }
       else{
 	std::cout << "Invalid ignoretimes in geometry.in" << '\n';
@@ -250,9 +251,7 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
   }
 
 
-  //
   //always return the physical World
-  //
   return physiWorld;
 }
 
@@ -278,7 +277,7 @@ void UCNDetectorConstruction::ConstructSDandField()
     
     // Set 12 to activate the spin tracking
     G4MagIntegratorStepper* stepper = new G4ClassicalRK4(equation,12);
-    // G4MagIntegratorStepper* stepper = new G4ClassicalRK4(equation,8);
+    //G4MagIntegratorStepper* stepper = new G4ClassicalRK4(equation,8);
 
     G4double minStep           = 0.01*mm;
     

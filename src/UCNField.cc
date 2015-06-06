@@ -22,10 +22,10 @@ void UCNField::GetFieldValue(const double Point[4],double *fieldArr) const
   double Ei[3];
   double B[4][4];
 
-  x=Point[0]/m;
-  y=Point[1]/m;
-  z=Point[2]/m;
-  t=Point[3]/s;
+  x = Point[0]/m;
+  y = Point[1]/m;
+  z = Point[2]/m;
+  t = Point[3]/s;
 
   for (int k = 0; k < 4; k++)
     for (int j = 0; j < 4; j++)
@@ -36,25 +36,25 @@ void UCNField::GetFieldValue(const double Point[4],double *fieldArr) const
     (*i)->BField(x, y, z, t, B);
     (*i)->EField(x, y, z, t, V, Ei);
   }
-  
-  fieldArr[0]=B[0][0]*tesla;   //Bx
-  fieldArr[1]=B[1][0]*tesla;   //By
-  fieldArr[2]=B[2][0]*tesla;   //Bz
-  fieldArr[3]=Ei[0]*volt/m;    //Ex
-  fieldArr[4]=Ei[1]*volt/m;    //Ey
-  fieldArr[5]=Ei[2]*volt/m;    //Ez
-  fieldArr[6]=0;               //gx
-  fieldArr[7]=0;               //gy
-  fieldArr[8]=-9.81*m/s/s;     //gz
-  fieldArr[9]=B[0][1]*tesla/m; //dBx/dx
-  fieldArr[10]=B[1][1]*tesla/m;//dBy/dx
-  fieldArr[11]=B[2][1]*tesla/m;//dBz/dx
-  fieldArr[12]=B[0][2]*tesla/m;//dBx/dy
-  fieldArr[13]=B[1][2]*tesla/m;//dBy/dy
-  fieldArr[14]=B[2][2]*tesla/m;//dBz/dy
-  fieldArr[15]=B[0][3]*tesla/m;//dBx/dz
-  fieldArr[16]=B[1][3]*tesla/m;//dBy/dz
-  fieldArr[17]=B[2][3]*tesla/m;//dBz/dz
+
+  fieldArr[0] = B[0][0]*tesla;  //Bx
+  fieldArr[1] = B[1][0]*tesla;  //By
+  fieldArr[2] = B[2][0]*tesla;  //Bz
+  fieldArr[3] = Ei[0]*volt/m;   //Ex
+  fieldArr[4] = Ei[1]*volt/m;   //Ey
+  fieldArr[5] = Ei[2]*volt/m;   //Ez
+  fieldArr[6] = 0;              //gx
+  fieldArr[7] = 0;              //gy
+  fieldArr[8] = -9.81*m/s/s;    //gz
+  fieldArr[9] = B[0][1]*tesla/m;//dBx/dx
+  fieldArr[10]= B[1][1]*tesla/m;//dBy/dx
+  fieldArr[11]= B[2][1]*tesla/m;//dBz/dx
+  fieldArr[12]= B[0][2]*tesla/m;//dBx/dy
+  fieldArr[13]= B[1][2]*tesla/m;//dBy/dy
+  fieldArr[14]= B[2][2]*tesla/m;//dBz/dy
+  fieldArr[15]= B[0][3]*tesla/m;//dBx/dz
+  fieldArr[16]= B[1][3]*tesla/m;//dBy/dz
+  fieldArr[17]= B[2][3]*tesla/m;//dBz/dz
 }
 
 void UCNField::GetCurrentFieldValue(const double t, const double x, const double y, const double z, double B[4][4], double *Ei, double &V)

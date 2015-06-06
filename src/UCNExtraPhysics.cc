@@ -55,13 +55,10 @@ void UCNExtraPhysics::ConstructProcess()
     }
 
     AddBetaDecay();
-
     ConstructUCN();
 
-
-    /***** This part is needed to activate spin tracking *****/
-    G4Transportation::EnableUseMagneticMoment();
-    /*********************************************************/
+    //activate spin tracking 
+    G4Transportation::EnableUseMagneticMoment(true);
 
 }
 

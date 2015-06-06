@@ -101,6 +101,9 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     if(phys_vol != "World"){
       stopID = atoi(phys_vol+9);
     }
+    else{
+      stopID = 1;
+    }
   }
 
   end_t = clock();

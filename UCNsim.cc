@@ -168,21 +168,24 @@ int main(int argc,char** argv)
 #endif
 
   // Seed the random number generator manually
-  if(jobseed) G4Random::setTheSeed(jobnumber);
+  long seed;
+  if(jobseed) seed = (long)jobnumber;
+  else        seed = (long)start_time;
+  G4Random::setTheSeed(seed);
 
   // Set mandatory initialization classes
   //
   // Detector construction
-  //runManager->SetUserInitialization(new UCNDetectorConstruction(SimTime, geometryin));
-
   UCNDetectorConstruction* dtc = new UCNDetectorConstruction(SimTime, geometryin);
   runManager->SetUserInitialization(dtc);
   G4cout << "Detector init. OK!" << G4endl;
   // Physics list
-  runManager->SetUserInitialization(new UCNPhysicsList());
+  UCNPhysicsList* phl = new UCNPhysicsList();
+  runManager->SetUserInitialization(phl);
   G4cout << "PhysicsList init. OK!" << G4endl;
   // User action initialization
-  runManager->SetUserInitialization(new UCNActionInitialization(jobnumber, outpath, secondary, geometryin, particlein, dtc));
+  UCNActionInitialization* aci = new UCNActionInitialization(jobnumber, outpath, secondary, geometryin, particlein, dtc);
+  runManager->SetUserInitialization(aci);
   G4cout << "Action init. OK!" << G4endl;
 
   // Initialize G4 kernel

@@ -37,7 +37,6 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
 
   std::string material_name;
   std::vector<std::string> materials;
-
   std::vector<TField*> fields;
 
   G4UCNMaterialPropertiesTable *mattbl[100];
@@ -45,6 +44,14 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
   double a, cohcs, incohcs, scatcs, abscs, density, fermipot, loss;
 
   bool fieldIsInitialized;
+
+  struct ignore{
+    double ignorestart;
+    double ignoreend;
+    int stlid;
+    int matid;
+  };
+  std::vector<ignore> ignores;
 
   UCNDetectorConstruction(double SIMTIME, TConfig GEOMIN);
   virtual ~UCNDetectorConstruction();
