@@ -45,7 +45,7 @@ void UCNPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   RandomPointInSourceVolume();
   fParticleGun->SetParticlePosition(G4ThreeVector(X, Y, Z));
   polarization = DicePolarisation(ParticleName);
-  fParticleGun->SetParticlePolarization(G4ThreeVector(0,polarization,0));
+  fParticleGun->SetParticlePolarization(G4ThreeVector(0,-polarization,0));
   particleEnergy = Spectrum(ParticleName) * eV;
   fParticleGun->SetParticleEnergy(particleEnergy);
   AngularDist(ParticleName, phi, theta);

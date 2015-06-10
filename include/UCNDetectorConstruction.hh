@@ -22,7 +22,6 @@ class G4VPhysicalVolume;
 #include "G4UCNMaterialPropertiesTable.hh"
 
 class G4Material; 
-//class G4UniformGravityField;
 class UCNField;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -75,7 +74,9 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
 public:
   
   UCNField* fField;
+  double simtime;
   UCNField* GetField(){return fField;}
+  double GetSimTime(){return simtime;};
   
 private:
  

@@ -50,8 +50,8 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   vx = (theTrack->GetVelocity()/(m/s))*(theTrack->GetMomentumDirection())[0];
   vy = (theTrack->GetVelocity()/(m/s))*(theTrack->GetMomentumDirection())[1];
   vz = (theTrack->GetVelocity()/(m/s))*(theTrack->GetMomentumDirection())[2];
-  if((theTrack->GetPolarization())[1]>0) polarisation=1;
-  else                                   polarisation=-1;
+  if((theTrack->GetPolarization())[1]>0) polarisation=-1;
+  else                                   polarisation=1;
 
   dtc->GetField()->GetCurrentFieldValue(t, x, y, z, B, Ei, V);
   
@@ -83,8 +83,8 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
 	* (theStep->GetPreStepPoint()->GetMomentumDirection())[1];
       v1z = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
 	* (theStep->GetPreStepPoint()->GetMomentumDirection())[2];
-      if((theStep->GetPreStepPoint()->GetPolarization())[1]>0) pol1 = 1;
-      else pol1 = -1;
+      if((theStep->GetPreStepPoint()->GetPolarization())[1]>0) pol1 = -1;
+      else pol1 = 1;
 
       v2x = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
 	* (theStep->GetPostStepPoint()->GetMomentumDirection())[0];
@@ -92,8 +92,8 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
 	* (theStep->GetPostStepPoint()->GetMomentumDirection())[1];
       v2z = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
 	* (theStep->GetPostStepPoint()->GetMomentumDirection())[2];
-      if((theStep->GetPostStepPoint()->GetPolarization())[1]>0) pol2 = 1;
-      else pol2 = -1;
+      if((theStep->GetPostStepPoint()->GetPolarization())[1]>0) pol2 = -1;
+      else pol2 = 1;
 
       phys_name1 = theStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
       strcpy(phys_vol1, phys_name1.c_str());

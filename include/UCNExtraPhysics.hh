@@ -7,16 +7,15 @@ class UCNExtraPhysics : public G4VPhysicsConstructor
 {
 public:
 
-    UCNExtraPhysics();
-    virtual ~UCNExtraPhysics();
+  UCNExtraPhysics();
+  virtual ~UCNExtraPhysics();
 
-    virtual void ConstructParticle();
-    virtual void ConstructProcess();
+  virtual void ConstructParticle();
+  virtual void ConstructProcess();
 
 private:
 
-    void ConstructUCN();
-
-    void AddBetaDecay();
+  void ConstructUCN();
+  //void AddBetaDecay();
 };
 #endif

@@ -21,6 +21,7 @@ UCNTrackingAction::UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON,
   runman =  G4RunManager::GetRunManager();
   issnapshot = false;
   endlog = ENDLOG;
+  simtime = dtc->GetSimTime();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -51,8 +52,8 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   vxstart = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[0];
   vystart = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[1];
   vzstart = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[2];
-  if((aTrack->GetPolarization())[1]>0) polstart=1;
-  else                                 polstart=-1;
+  if((aTrack->GetPolarization())[1]>0) polstart=-1;
+  else                                 polstart=1;
 
   dtc->GetField()->GetCurrentFieldValue(tstart, xstart, ystart, zstart, B, Ei, V);
   Hstart = aTrack->GetKineticEnergy()/eV  + Epot(aTrack, V, polstart, B[3][0], zstart);
@@ -77,8 +78,8 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   vxend = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[0];
   vyend = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[1];
   vzend = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[2];
-  if((aTrack->GetPolarization())[1]>0) polend=1;
-  else                                 polend=-1;
+  if((aTrack->GetPolarization())[1]>0) polend=-1;
+  else                                 polend=1;
 
   dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
   Hend = aTrack->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], zend);
@@ -88,14 +89,13 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessType() == fDecay){
     stopID = -4;
   }
-  else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fUserDefinedLimit){
+  else if(tend>=simtime-1e-6){
     stopID = -1;
   }
   else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fWorldBoundary){
     stopID = -2;
   }
   else{
-    //phys_name = aTrack->GetNextVolume()->GetName();
     phys_name = aTrack->GetStep()->GetPostStepPoint()->GetPhysicalVolume()->GetName();
     strcpy(phys_vol, phys_name.c_str());
     if(phys_vol != "World"){

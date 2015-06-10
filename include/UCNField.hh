@@ -23,7 +23,7 @@ public:
   
   virtual void GetFieldValue( const  double Point[4],
 		      double *fieldArr ) const;
-  virtual G4bool DoesFieldChangeEnergy() const{ return true;}
+  virtual G4bool DoesFieldChangeEnergy() const{return true;}
 
   std::vector<TField*> fields;
 

@@ -25,6 +25,8 @@ class UCNTrackingAction : public G4UserTrackingAction {
   int jobnumber;
   std::string outpath;
   std::string name;
+
+  double simtime;
   
   double tstart, xstart, ystart, zstart, vxstart, vystart, vzstart, Hstart, Estart, tend, xend, yend, zend, vxend, vyend, vzend, Hend, Eend, spinflipprob, ComputingTime, trajlength, Hmax;
   int particle, polstart, polend, stopID, NSpinflip, Nhit, Nstep;

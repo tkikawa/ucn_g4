@@ -40,14 +40,10 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 
-#include "G4UniformGravityField.hh"
-
 #include "G4FieldManager.hh"
 #include "G4TransportationManager.hh"
 
 #include "G4RepleteEofM.hh"
-//#include "G4EqMagElectricField.hh"
-//#include "G4EqGravityField.hh"
 
 #include "G4ClassicalRK4.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -64,6 +60,7 @@ UCNDetectorConstruction::UCNDetectorConstruction(double SIMTIME, TConfig GEOMIN)
   DefineMaterials();
   ReadInField(geometryin);
   g4limit = new G4UserLimits(DBL_MAX,DBL_MAX,SIMTIME*s);
+  simtime=SIMTIME;
   fieldIsInitialized = false;
 }
 
@@ -134,10 +131,6 @@ void UCNDetectorConstruction::DefineMaterials()
     else
       std::cout << "Could not load material " << i->first << '\n';
   }
-
-
-
-
 
 }
 
@@ -269,7 +262,7 @@ void UCNDetectorConstruction::ConstructSDandField()
     equation->SetBField();
     equation->SetEField();
     equation->SetgradB();
-    equation->SetSpin();
+    //equation->SetSpin();
 
     G4FieldManager* fieldManager
       = G4TransportationManager::GetTransportationManager()->GetFieldManager();
