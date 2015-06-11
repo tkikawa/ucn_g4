@@ -5,8 +5,9 @@
 // USER //
 #include "UCNDetectorConstruction.hh"
 
-// CADMESH //
-#include "CADMesh.hh"
+// LoadCAD //
+#include "G4TessellatedSolid.hh"
+#include "G4TriangularFacet.hh"
 
 // GEANT4 //
 #include "G4Material.hh"
@@ -193,10 +194,8 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 	if (matname == materials[j]){
 	  mid=j;
 	  if (ID > 1){
-	    offset = G4ThreeVector(0, 0, 0);
 	    std::cout<<"Reading: "<<STLfile<<std::endl;
-	    CADMesh *mesh = new CADMesh((char*)STLfile.c_str(), "STL", m, offset, false);
-	    cad_solid[icad] = (G4VSolid*)mesh->TessellatedMesh();
+	    cad_solid[icad] = LoadCAD((char*)STLfile.c_str());
 	    sprintf(solid_name,"solid_%d",ID);
 	    cad_union[icad] = new G4UnionSolid(solid_name, cad_solid[icad], btmp, 0, G4ThreeVector(5*m, 5*m, 5*m));
 	    sprintf(logical_name,"logical_%d",ID);
@@ -369,6 +368,55 @@ void UCNDetectorConstruction::ReadInField(TConfig conf){
   }
 }
 
+
+G4VSolid* UCNDetectorConstruction::LoadCAD(char* file_name){
+
+  scene = importer.ReadFile(file_name,
+			    aiProcess_Triangulate           |
+			    aiProcess_JoinIdenticalVertices |
+			    aiProcess_CalcTangentSpace);
+
+  aim = scene->mMeshes[0];
+
+  volume_solid = new G4TessellatedSolid(file_name);
+
+  G4ThreeVector point_1;
+  G4ThreeVector point_2;
+  G4ThreeVector point_3;
+
+  for(unsigned int i=0; i < aim->mNumFaces; i++)
+    {
+      const aiFace& face = aim->mFaces[i];
+
+      point_1.setX(aim->mVertices[face.mIndices[0]].x * m);
+      point_1.setY(aim->mVertices[face.mIndices[0]].y * m);
+      point_1.setZ(aim->mVertices[face.mIndices[0]].z * m);
+
+      point_2.setX(aim->mVertices[face.mIndices[1]].x * m);
+      point_2.setY(aim->mVertices[face.mIndices[1]].y * m);
+      point_2.setZ(aim->mVertices[face.mIndices[1]].z * m);
+
+      point_3.setX(aim->mVertices[face.mIndices[2]].x * m);
+      point_3.setY(aim->mVertices[face.mIndices[2]].y * m);
+      point_3.setZ(aim->mVertices[face.mIndices[2]].z * m);
+
+      G4TriangularFacet * facet;
+      facet = new G4TriangularFacet(point_1, point_2, point_3, ABSOLUTE);
+      volume_solid->AddFacet((G4VFacet*) facet);
+    }
+
+  volume_solid->SetSolidClosed(true);
+
+  if (volume_solid->GetNumberOfFacets() == 0) {
+    G4cerr << "LoadCAD: "
+	   << "Load a mesh has 0 faces, " << file_name << " may not exist."
+	   << G4endl;
+    return 0;
+  }
+
+  return volume_solid;
+
+}
 
 void UCNDetectorConstruction::GetMaterial(int imat, std::string name){
 

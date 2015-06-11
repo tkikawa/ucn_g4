@@ -17,11 +17,6 @@ This is the Monte Calro simulation code of UCN (ultra-cold neutron) with GEANT4 
 [ASSIMP](http://assimp.sourceforge.net/) is a portable open source library to import [various well-known 3D model formats](http://assimp.sourceforge.net/main_features_formats.html) in a uniform manner. ASSIMP v.3.1.1
 has been tested.
 
-### CADMesh
-
-[CADMesh](https://code.google.com/p/cadmesh/) is a direct CAD model import interface for GEANT4 leveraging ASSIMP for reading the CAD files. CADMesh v.0.9 has tested. If the CADMesh library is used, the following reference publication should be quoted:  
-[C. M. Poole et al., Australasian Physical & Engineering Science in Medicine, 35, 3, 329 (2012)](http://link.springer.com/article/10.1007%2Fs13246-012-0159-8).
-
 ### muparser
 
 [muparser](http://muparser.beltoforion.de/) is a fast formula parser and is used to interpret energy distributions etc. given by the user in particle.in. muparser v.2.2.4 has been tested.
@@ -66,15 +61,6 @@ For the installtion, [cmake](http://www.cmake.org/) is used. The cmake version n
 - make  
 - make install  
 
-### Installation of CADMesh
-
-- Download the codes from [CADMesh website](https://code.google.com/p/cadmesh/downloads/list?can=1&q=) and decompress it.  
-- mkdir build  
-- cd build  
-- cmake ../ -DCMAKE_INSTALL_PREFIX=/usr/local/cadmesh/ (directory where CADMesh will be installed.)
-- make  
-- make install  
-
 ### Installation of muparser
 
 - Download the codes from [muparser website](http://muparser.beltoforion.de/mup_download.html) and decompress it.  
@@ -83,7 +69,7 @@ For the installtion, [cmake](http://www.cmake.org/) is used. The cmake version n
 - make install  
 
 ### Installation of this simulation code
-- (Edit the directory settings in CMakeLists.txt if you installed the above libraries in other directories than defaults.)  
+- (Edit the directory settings in CMakeLists.txt if you installed the abeve libraries in other directories than defaults.)  
 - mkdir build  
 - cd build  
 - cmake ../  
@@ -162,7 +148,7 @@ The endlog keeps track of the starting and end parameters of the particles simul
 - stopID: code which identifies how/in what geometry the particle ended 
   - 0: not categorized
   - -1: did not finish (reached max. simulation time)
-  - -2: hit outer boundaries
+  - -2: hit outer poundaries
   - -3: produced numerical error
   - -4: decayed
   - -5: found no initial position

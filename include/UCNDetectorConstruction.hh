@@ -13,6 +13,13 @@
 #include "UCNConductorField.hh"
 #include "UCNField.hh"
 
+// Open Asset Importer Library //
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
+#include "G4TessellatedSolid.hh"
+
 class G4VSolid;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
@@ -62,14 +69,18 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
 
   private:
 
-
-  G4ThreeVector offset;
   G4VSolid *cad_solid[300], *cad_union[300];
   G4LogicalVolume *cad_logical[300];
   G4VPhysicalVolume *cad_physical[300];
  
   G4Material*     fVacuum;
   G4Material *ucn_material[100];
+
+  Assimp::Importer importer;
+  G4TessellatedSolid * volume_solid;
+  const aiScene* scene;
+  aiMesh* aim;
+  G4VSolid* LoadCAD(char* filename);
 
 public:
   
