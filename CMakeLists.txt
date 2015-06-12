@@ -25,11 +25,6 @@ find_package(assimp)
 include_directories(/usr/local/assimp/include)
 link_directories(/usr/local/assimp/lib)
 
-# CADMesh
-find_package(cadmesh)
-include_directories(/usr/local/cadmesh/include)
-link_directories(/usr/local/cadmesh/lib)
-
 # muparser
 include_directories(/usr/local/muparser/include)
 link_directories(/usr/local/muparser/lib)
@@ -58,7 +53,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #add_executable(UCNsim UCNsim.cc ${sources} ${headers})
 add_executable(UCNsim UCNsim.cc ${sources} ${headers} ${alglib_sources} ${alglib_headers} ${libtricubic_sources} ${libtricubic_headers})
 target_link_libraries(UCNsim ${Geant4_LIBRARIES})
-target_link_libraries(UCNsim ${cadmesh_LIBRARIES})
+target_link_libraries(UCNsim ${assimp_LIBRARIES})
 target_link_libraries(UCNsim /usr/local/muparser/lib/libmuparser.so)
 
 #----------------------------------------------------------------------------

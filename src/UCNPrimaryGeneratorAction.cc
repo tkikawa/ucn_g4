@@ -122,9 +122,8 @@ void UCNPrimaryGeneratorAction::TSource(TConfig geometryconf){
 			      aiProcess_JoinIdenticalVertices |
 			      aiProcess_CalcTangentSpace);    
     aim = scene->mMeshes[0];
-    X_min=1e2*m; X_max=-1e2*m;
-    Y_min=1e2*m; Y_max=-1e2*m;
-    Z_min=1e2*m; Z_max=-1e2*m;
+    X_min = Y_min = Z_min = DBL_MAX;
+    X_max = Y_max = Z_max = -DBL_MAX;
     G4double X_mesh[3], Y_mesh[3], Z_mesh[3];
     for(unsigned int i=0; i < aim->mNumFaces; i++){
       const aiFace& face = aim->mFaces[i];
