@@ -4,10 +4,6 @@
 #include "G4Transportation.hh"
 #include "G4PhysicsListHelper.hh"
 
-//#include "G4Decay.hh"
-//#include "G4DecayTable.hh"
-//#include "G4NeutronBetaDecayChannel.hh"
-
 #include "G4UserSpecialCuts.hh"
 #include "G4StepLimiter.hh"
 #include "G4SystemOfUnits.hh"
@@ -54,53 +50,12 @@ void UCNExtraPhysics::ConstructProcess()
         pmanager->AddDiscreteProcess(new G4UserSpecialCuts());
     }
 
-    //AddBetaDecay();
     ConstructUCN();
 
     //activate spin tracking 
     G4Transportation::EnableUseMagneticMoment(true);
 
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-/*
-void UCNExtraPhysics::AddBetaDecay()
-{
-    aParticleIterator->reset();
-
-    while ((*aParticleIterator)()) {
-
-        G4ParticleDefinition* particle = aParticleIterator->value();
-        G4String particleName = particle->GetParticleName();
-
-        if ( particleName == "neutron" ) {
-
-           particle->SetPDGLifeTime(886.7*second);
-           particle->SetPDGStable(false);
-
-           G4DecayTable * table = new G4DecayTable();
-           G4VDecayChannel* mode = 
-                                new G4NeutronBetaDecayChannel("neutron",1.00);
-           table->Insert(mode);
-           particle->SetDecayTable(table);
-
-           G4ProcessManager* pmanager = particle->GetProcessManager();
-           if (!pmanager) {
-               std::ostringstream o;
-               o << "Particle " << particleName << "without a Process Manager";
-               G4Exception("UCNExtraPhysics::ConstructProcess()","",
-                            FatalException,o.str().c_str());
-           }
-
-           G4Decay* theDecayProcess = new G4Decay();
-           pmanager->AddProcess(theDecayProcess);
-           pmanager->SetProcessOrdering(theDecayProcess,idxPostStep);
-           pmanager->SetProcessOrdering(theDecayProcess,idxAtRest);
-        }
-    }
-}
-*/
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

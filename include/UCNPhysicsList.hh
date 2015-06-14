@@ -15,8 +15,6 @@ public:
 
     void SetCuts();
 
-private:
-
 };
 
 #endif

@@ -14,19 +14,20 @@
 class UCNField : public G4ElectroMagneticField
 {
 public:
-
+  
   UCNField(std::vector<TField*> FIELDS);
-
+  
   void GetCurrentFieldValue(const double t, const double x, const double y, const double z, double B[4][4], double *Ei, double &V);
-
+  
   virtual ~UCNField();
   
   virtual void GetFieldValue( const  double Point[4],
-		      double *fieldArr ) const;
+			      double *fieldArr ) const;
   virtual G4bool DoesFieldChangeEnergy() const{return true;}
 
+private:
+  
   std::vector<TField*> fields;
-
 };
 
 #endif

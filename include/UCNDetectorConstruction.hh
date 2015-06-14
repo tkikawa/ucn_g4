@@ -35,22 +35,27 @@ class UCNField;
 
 class UCNDetectorConstruction : public G4VUserDetectorConstruction
 {
-  public:
+public:
+  
+  UCNDetectorConstruction(double SIMTIME, TConfig GEOMIN);
+  virtual ~UCNDetectorConstruction();
+  virtual G4VPhysicalVolume* Construct();
+  virtual void ConstructSDandField();
+  UCNField* GetField(){return fField;}
+  double GetSimTime(){return simtime;};
+  
+private:
 
+  UCNField* fField;
+  double simtime;
   G4UserLimits* g4limit;
-
   TConfig geometryin;
-
   std::string material_name;
   std::vector<std::string> materials;
   std::vector<TField*> fields;
-
   G4UCNMaterialPropertiesTable *mattbl[100];
-
   double a, cohcs, incohcs, scatcs, abscs, density, fermipot, loss;
-
   bool fieldIsInitialized;
-
   struct ignore{
     double ignorestart;
     double ignoreend;
@@ -59,43 +64,21 @@ class UCNDetectorConstruction : public G4VUserDetectorConstruction
   };
   std::vector<ignore> ignores;
 
-  UCNDetectorConstruction(double SIMTIME, TConfig GEOMIN);
-  virtual ~UCNDetectorConstruction();
-
-  public:
- 
-    virtual G4VPhysicalVolume* Construct();
-    virtual void ConstructSDandField();
-
-  private:
-
   G4VSolid *cad_solid[300], *cad_union[300];
   G4LogicalVolume *cad_logical[300];
-  G4VPhysicalVolume *cad_physical[300];
- 
+  G4VPhysicalVolume *cad_physical[300]; 
   G4Material*     fVacuum;
   G4Material *ucn_material[100];
-
   Assimp::Importer importer;
   G4TessellatedSolid * volume_solid;
   const aiScene* scene;
   aiMesh* aim;
-  G4VSolid* LoadCAD(char* filename);
-
-public:
-  
-  UCNField* fField;
-  double simtime;
-  UCNField* GetField(){return fField;}
-  double GetSimTime(){return simtime;};
-  
-private:
  
   void GetMaterial(int imat, std::string name);
   void GetElementValues(std::string name);
   void DefineMaterials();
   void ReadInField(TConfig conf);
-
+  G4VSolid* LoadCAD(char* filename);
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

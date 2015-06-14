@@ -11,30 +11,25 @@
 class UCNActionInitialization : public G4VUserActionInitialization
 {
 public:
+
+  UCNActionInitialization(int JOBNUM, std::string OUTPATH, int SECON, TConfig GEOMIN, TConfig PARIN, UCNDetectorConstruction* DTC);
+  virtual ~UCNActionInitialization();  
+  virtual void BuildForMaster() const;
+  virtual void Build() const;
+  
+private:
+
   int jobnumber;
   std::string outpath;
-
   TConfig particlein;
   TConfig geometryin;
   int secondaries;
   UCNDetectorConstruction* dtc;
-
   bool loginfo[5];
   double trackloginterval;
   std::vector<double> snaptime;
 
-
-  UCNActionInitialization(int JOBNUM, std::string OUTPATH, int SECON, TConfig GEOMIN, TConfig PARIN, UCNDetectorConstruction* DTC);
-  virtual ~UCNActionInitialization();
-  
-  virtual void BuildForMaster() const;
-  virtual void Build() const;
-
   void ReadLogInfo(TConfig conf);
-  
-  //private:
-
-
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
