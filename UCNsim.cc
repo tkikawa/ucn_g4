@@ -18,7 +18,7 @@
 #include <fstream>
 #include <iomanip>
 #include <numeric>
-#include <sys/time.h>
+#include <time.h>
 
 
 #include "UCNPhysicsList.hh"
@@ -118,9 +118,9 @@ int main(int argc,char** argv)
     op++;
   }
 
-  clock_t start_time, end_time;
-  start_time = clock();
-
+  time_t start_time, end_time, time_diff;
+  struct tm *t_st;
+  time(&start_time);
 
   TConfig configin;
   ReadInFile(std::string(inpath + "/config.in").c_str(), configin);
@@ -169,8 +169,8 @@ int main(int argc,char** argv)
 
   // Seed the random number generator manually
   long seed;
-  if(jobseed) seed = (long)jobnumber;
-  else        seed = (long)start_time;
+  if(jobseed) seed = long(jobnumber);
+  else        seed = long(start_time);
   G4Random::setTheSeed(seed);
 
   // Set mandatory initialization classes
@@ -220,15 +220,10 @@ int main(int argc,char** argv)
 #endif
   delete runManager;
 
-
-  end_time = clock();
-  clock_t time_hour, time_min, time_sec;
-  time_sec = (end_time - start_time)/CLOCKS_PER_SEC;
-  time_min = time_sec / 60;
-  time_sec = time_sec % 60;
-  time_hour = time_min / 60;
-  time_min = time_min % 60;
-  G4cout << "Simulation time: "<<time_hour <<"h"<< time_min <<"m"<< time_sec <<"s"<< G4endl;
+  time(&end_time);
+  time_diff = end_time - start_time;
+  t_st = localtime(&time_diff);
+  G4cout << "Simulation time: "<< 24*(t_st->tm_mday-1) + t_st->tm_hour <<"h"<< t_st->tm_min <<"m"<< t_st->tm_sec <<"s"<< G4endl;
   G4cout << "All finished. \\(^o^)/" << G4endl;
 
   return 0;

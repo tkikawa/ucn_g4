@@ -12,7 +12,6 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-//UCNPrimaryGeneratorAction::UCNPrimaryGeneratorAction(void)
 UCNPrimaryGeneratorAction::UCNPrimaryGeneratorAction(TConfig GEOMIN, TConfig PARTIN)
 {
   geometryin=GEOMIN;
