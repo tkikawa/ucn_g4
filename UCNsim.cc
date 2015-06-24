@@ -221,8 +221,8 @@ int main(int argc,char** argv)
   delete runManager;
 
   time(&end_time);
-  time_diff = end_time - start_time;
-  t_st = localtime(&time_diff);
+  time_diff = difftime(end_time, start_time);
+  t_st = gmtime(&time_diff);
   G4cout << "Simulation time: "<< 24*(t_st->tm_mday-1) + t_st->tm_hour <<"h"<< t_st->tm_min <<"m"<< t_st->tm_sec <<"s"<< G4endl;
   G4cout << "All finished. \\(^o^)/" << G4endl;
 

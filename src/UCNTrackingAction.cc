@@ -106,6 +106,21 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     }
   }
 
+  if(stopID == -2){
+    tend = aTrack->GetStep()->GetPreStepPoint()->GetGlobalTime()/s;
+    xend = (aTrack->GetStep()->GetPreStepPoint()->GetPosition()/m)[0];
+    yend = (aTrack->GetStep()->GetPreStepPoint()->GetPosition()/m)[1];
+    zend = (aTrack->GetStep()->GetPreStepPoint()->GetPosition()/m)[2];
+    vxend = (aTrack->GetStep()->GetPreStepPoint()->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[0];
+    vyend = (aTrack->GetStep()->GetPreStepPoint()->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[1];
+    vzend = (aTrack->GetStep()->GetPreStepPoint()->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[2];
+    if((aTrack->GetStep()->GetPreStepPoint()->GetPolarization())[1]>0) polend=-1;
+    else polend=1;
+    dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
+    Hend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], zend);
+    Eend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV;
+  }
+
   end_t = clock();
   ComputingTime = (double)(end_t - start_t)/CLOCKS_PER_SEC;
 
