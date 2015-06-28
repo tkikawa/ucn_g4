@@ -35,8 +35,9 @@ private:
   std::string outpath;
   std::string name;
   double simtime;
-  double tstart, xstart, ystart, zstart, vxstart, vystart, vzstart, Hstart, Estart, tend, xend, yend, zend, vxend, vyend, vzend, Hend, Eend, spinflipprob, ComputingTime, trajlength, Hmax;
-  int particle, polstart, polend, stopID, NSpinflip, Nhit, Nstep;
+  double tstart, xstart, ystart, zstart, vxstart, vystart, vzstart, Hstart, Estart, Bstart, Ustart, tend, xend, yend, zend, vxend, vyend, vzend, Hend, Eend, Bend, Uend, spinflipprob, ComputingTime, trajlength, Hmax;
+  int particle, polstart, polend, stopID, NSpinflip, Nhit, Nstep, solidstart, solidend;
+
   double B[4][4], Ei[3], V;
   clock_t start_t, end_t;
   char phys_vol[20];

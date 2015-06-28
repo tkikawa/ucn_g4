@@ -9,6 +9,7 @@
 #include "G4VProcess.hh"
 #include "G4ProcessType.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4UCNProcessSubType.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -58,6 +59,17 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   dtc->GetField()->GetCurrentFieldValue(tstart, xstart, ystart, zstart, B, Ei, V);
   Hstart = aTrack->GetKineticEnergy()/eV  + Epot(aTrack, V, polstart, B[3][0], zstart);
   Estart = aTrack->GetKineticEnergy()/eV;
+  Bstart = B[0][0];
+  Ustart = V;
+
+  phys_name = aTrack->GetVolume()->GetName();
+  strcpy(phys_vol, phys_name.c_str());
+  if(phys_vol != "World"){
+    solidstart = atoi(phys_vol+9);
+  }
+  else{
+    solidstart = 1;
+  }
 
   start_t = clock();
   NSpinflip = 0;
@@ -84,8 +96,18 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
   Hend = aTrack->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], zend);
   Eend = aTrack->GetKineticEnergy()/eV;
+  Bend = B[0][0];
+  Uend = V;
 
-  stopID = 0;
+  phys_name = aTrack->GetVolume()->GetName();
+  strcpy(phys_vol, phys_name.c_str());
+  if(phys_vol != "World"){
+    solidend = atoi(phys_vol+9);
+  }
+  else{
+    solidend = 1;
+  }
+
   if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessType() == fDecay){
     stopID = -4;
   }
@@ -95,15 +117,14 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fWorldBoundary){
     stopID = -2;
   }
+  else if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessSubType() == fUCNAbsorption){
+    stopID = 1;
+  }
+  else if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessSubType() == fUCNBoundary){
+    stopID = 2;
+  }
   else{
-    phys_name = aTrack->GetStep()->GetPostStepPoint()->GetPhysicalVolume()->GetName();
-    strcpy(phys_vol, phys_name.c_str());
-    if(phys_vol != "World"){
-      stopID = atoi(phys_vol+9);
-    }
-    else{
-      stopID = 1;
-    }
+    stopID = 0;
   }
 
   if(stopID == -2){
@@ -119,6 +140,8 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
     Hend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], zend);
     Eend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV;
+    Bend = B[0][0];
+    Uend = V;
   }
 
   end_t = clock();
@@ -172,10 +195,10 @@ void UCNTrackingAction::OpenFile(){
   file[pid][issnapshot] << "jobnumber particle "
     "tstart xstart ystart zstart "
     "vxstart vystart vzstart "
-    "polstart Hstart Estart "
+    "polstart Hstart Estart Bstart Ustart solidstart "
     "tend xend yend zend "
     "vxend vyend vzend "
-    "polend Hend Eend stopID Nspinflip spinflipprob "
+    "polend Hend Eend Bend Uend solidend stopID Nspinflip spinflipprob "
     "ComputingTime Nhit Nstep trajlength Hmax\n";
   file[pid][issnapshot].precision(10);
 }
@@ -185,12 +208,11 @@ void UCNTrackingAction::PrintData(){
   file[pid][issnapshot] << jobnumber << " " << particle << " "
 			<< tstart << " " << xstart << " " << ystart << " " << zstart << " "
 			<< vxstart << " " << vystart << " " << vzstart << " "
-			<< polstart << " " << Hstart << " " << Estart << " "
+			<< polstart << " " << Hstart << " " << Estart << " "<< Bstart << " "<< Ustart << " "<< solidstart << " "
 			<< tend << " " << xend << " " << yend << " " << zend << " "
 			<< vxend << " " << vyend << " " << vzend << " "
-			<< polend << " " << Hend << " " << Eend << " " << stopID << " " << NSpinflip << " " << spinflipprob << " "
+			<< polend << " " << Hend << " " << Eend << " " << Bend << " "<< Uend << " "<< solidend << " " << stopID << " " << NSpinflip << " " << spinflipprob << " "
 			<< ComputingTime << " " << Nhit << " " << Nstep << " " << trajlength << " " << Hmax << '\n';
-  
 
 }
 
