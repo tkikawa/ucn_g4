@@ -154,7 +154,7 @@ The endlog keeps track of the starting and end parameters of the particles simul
 - stopID: code which identifies why the particle was stopped
   - 0: not categorized
   - -1: did not finish (reached max. simulation time)
-  - -2: hit outer poundaries
+  - -2: hit outer boundaries
   - -4: decayed
   - 1: absorbed in bulk material (see solidend)
   - 2: absorbed on total reflection on surface (see solidend)

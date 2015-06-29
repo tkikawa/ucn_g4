@@ -59,7 +59,7 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   dtc->GetField()->GetCurrentFieldValue(tstart, xstart, ystart, zstart, B, Ei, V);
   Hstart = aTrack->GetKineticEnergy()/eV  + Epot(aTrack, V, polstart, B[3][0], zstart);
   Estart = aTrack->GetKineticEnergy()/eV;
-  Bstart = B[0][0];
+  Bstart = B[3][0];
   Ustart = V;
 
   phys_name = aTrack->GetVolume()->GetName();
@@ -96,7 +96,7 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
   Hend = aTrack->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], zend);
   Eend = aTrack->GetKineticEnergy()/eV;
-  Bend = B[0][0];
+  Bend = B[3][0];
   Uend = V;
 
   phys_name = aTrack->GetVolume()->GetName();
@@ -140,7 +140,7 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
     Hend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], zend);
     Eend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV;
-    Bend = B[0][0];
+    Bend = B[3][0];
     Uend = V;
   }
 
