@@ -117,15 +117,13 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fWorldBoundary){
     stopID = -2;
   }
-  else if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessSubType() == fUCNAbsorption){
-    stopID = 1;
-  }
-  else if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessSubType() == fUCNBoundary){
+  else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fGeomBoundary ){
     stopID = 2;
   }
   else{
-    stopID = 0;
+    stopID = 1;
   }
+
 
   if(stopID == -2){
     tend = aTrack->GetStep()->GetPreStepPoint()->GetGlobalTime()/s;
