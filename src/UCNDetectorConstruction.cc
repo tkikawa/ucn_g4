@@ -100,6 +100,8 @@ void UCNDetectorConstruction::DefineMaterials()
     if (ss){
       std::cout<<"Material setting for "<<material_name.c_str()<<"..."<<std::flush;
       GetMaterial(imat, material_name);
+      abscs=2*FermiImag*neV/hbar_Planck/(2200.*meter/second)/(ucn_material[imat]->GetTotNbOfAtomsPerVolume())/barn;
+      scatcs=0;
 
       mattbl[imat] = new G4UCNMaterialPropertiesTable();
       mattbl[imat]->AddConstProperty("FERMIPOT",FermiReal);
