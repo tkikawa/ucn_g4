@@ -61,15 +61,7 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   Estart = aTrack->GetKineticEnergy()/eV;
   Bstart = B[3][0];
   Ustart = V;
-
-  phys_name = aTrack->GetVolume()->GetName();
-  if(phys_name != "World"){
-    strcpy(phys_vol, phys_name.c_str());
-    solidstart = atoi(phys_vol+9);
-  }
-  else{
-    solidstart = 1;
-  }
+  solidstart = SolidID(aTrack->GetVolume()->GetName());
 
   start_t = clock();
   NSpinflip = 0;
@@ -98,17 +90,12 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   Eend = aTrack->GetKineticEnergy()/eV;
   Bend = B[3][0];
   Uend = V;
+  solidend = SolidID(aTrack->GetVolume()->GetName());
 
-  phys_name = aTrack->GetVolume()->GetName();
-  if(phys_name != "World"){
-    strcpy(phys_vol, phys_name.c_str());
-    solidend = atoi(phys_vol+9);
+  if(issnapshot){
+    stopID = ID_UNKNOWN;
   }
-  else{
-    solidend = 1;
-  }
-
-  if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessType() == fDecay){
+  else if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessType() == fDecay){
     stopID = ID_DECAYED;
   }
   else if(tend>=simtime-1e-6){
@@ -221,3 +208,16 @@ double UCNTrackingAction::Epot(const G4Track* theTrack, double v, double pol, do
     - (theTrack->GetDefinition()->GetPDGMass()/eV/c_0/c_0)*(gx*x+gy*y+gz*z);
   return epot;
 }
+
+
+int UCNTrackingAction::SolidID(G4String phys_name){
+  if(phys_name != "World"){
+    strcpy(phys_vol, phys_name.c_str());
+    return atoi(phys_vol+9);
+  }
+  else{
+    return 1;
+  }
+}
+
+

@@ -74,40 +74,33 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   else if(pid==11)   {pid=2;name="electron";}
   else               return;
 
-  if(hitlog){
-    if(pre_phys_name != post_phys_name){
-      
-      v1x = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
-	* (theStep->GetPreStepPoint()->GetMomentumDirection())[0];
-      v1y = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
-	* (theStep->GetPreStepPoint()->GetMomentumDirection())[1];
-      v1z = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
-	* (theStep->GetPreStepPoint()->GetMomentumDirection())[2];
-      if((theStep->GetPreStepPoint()->GetPolarization())[1]>0) pol1 = -1;
-      else pol1 = 1;
-
-      v2x = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
-	* (theStep->GetPostStepPoint()->GetMomentumDirection())[0];
-      v2y = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
-	* (theStep->GetPostStepPoint()->GetMomentumDirection())[1];
-      v2z = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
-	* (theStep->GetPostStepPoint()->GetMomentumDirection())[2];
-      if((theStep->GetPostStepPoint()->GetPolarization())[1]>0) pol2 = -1;
-      else pol2 = 1;
-
-      phys_name1 = theStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
-      strcpy(phys_vol1, phys_name1.c_str());
-      solid1 = atoi(phys_vol1+9);
-
-      phys_name2 = theStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();
-      strcpy(phys_vol2, phys_name2.c_str());
-      solid2 = atoi(phys_vol2+9);
-
-      if (!hitfile[pid].is_open())OpenHitFile();
-      PrintHitData();
-    }
+  if(hitlog&&hit){
+    
+    v1x = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
+      * (theStep->GetPreStepPoint()->GetMomentumDirection())[0];
+    v1y = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
+      * (theStep->GetPreStepPoint()->GetMomentumDirection())[1];
+    v1z = (theStep->GetPreStepPoint()->GetVelocity()/(m/s))
+      * (theStep->GetPreStepPoint()->GetMomentumDirection())[2];
+    if(pre_pol>0) pol1 = -1;
+    else          pol1 = 1;
+    
+    v2x = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
+      * (theStep->GetPostStepPoint()->GetMomentumDirection())[0];
+    v2y = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
+      * (theStep->GetPostStepPoint()->GetMomentumDirection())[1];
+    v2z = (theStep->GetPostStepPoint()->GetVelocity()/(m/s))
+      * (theStep->GetPostStepPoint()->GetMomentumDirection())[2];
+    if(post_pol>0) pol2 = -1;
+    else           pol2 = 1;
+    
+    solid1 = tac->SolidID(pre_phys_name);
+    solid2 = tac->SolidID(post_phys_name);
+    
+    if (!hitfile[pid].is_open())OpenHitFile();
+    PrintHitData();
   }
-
+  
   if(snapshotlog){
     double t0 = theStep->GetPreStepPoint()->GetGlobalTime()/s;
     double t1 = theStep->GetPostStepPoint()->GetGlobalTime()/s;

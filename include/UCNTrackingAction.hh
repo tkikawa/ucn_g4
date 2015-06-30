@@ -22,6 +22,7 @@ class UCNTrackingAction : public G4UserTrackingAction {
   void SnapShotAction(const G4Track*);
   void StepAction(double H, bool Spinflip, bool hit);
   double Epot(const G4Track* theTrack, double v, double pol, double b, double x, double y, double z);
+  int SolidID(G4String phys_name);
 
 private:
 
@@ -41,7 +42,6 @@ private:
   double B[4][4], Ei[3], V;
   clock_t start_t, end_t;
   char phys_vol[20];
-  std::string phys_name;
   UCNDetectorConstruction* dtc;
 
   void OpenFile();
