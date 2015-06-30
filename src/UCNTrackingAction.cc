@@ -57,14 +57,14 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   else                                 polstart=1;
 
   dtc->GetField()->GetCurrentFieldValue(tstart, xstart, ystart, zstart, B, Ei, V);
-  Hstart = aTrack->GetKineticEnergy()/eV  + Epot(aTrack, V, polstart, B[3][0], zstart);
+  Hstart = aTrack->GetKineticEnergy()/eV  + Epot(aTrack, V, polstart, B[3][0], xstart, ystart, zstart);
   Estart = aTrack->GetKineticEnergy()/eV;
   Bstart = B[3][0];
   Ustart = V;
 
   phys_name = aTrack->GetVolume()->GetName();
-  strcpy(phys_vol, phys_name.c_str());
-  if(phys_vol != "World"){
+  if(phys_name != "World"){
+    strcpy(phys_vol, phys_name.c_str());
     solidstart = atoi(phys_vol+9);
   }
   else{
@@ -94,14 +94,14 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   else                                 polend=1;
 
   dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
-  Hend = aTrack->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], zend);
+  Hend = aTrack->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], xend, yend, zend);
   Eend = aTrack->GetKineticEnergy()/eV;
   Bend = B[3][0];
   Uend = V;
 
   phys_name = aTrack->GetVolume()->GetName();
-  strcpy(phys_vol, phys_name.c_str());
-  if(phys_vol != "World"){
+  if(phys_name != "World"){
+    strcpy(phys_vol, phys_name.c_str());
     solidend = atoi(phys_vol+9);
   }
   else{
@@ -109,19 +109,19 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   }
 
   if(aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessType() == fDecay){
-    stopID = -4;
+    stopID = ID_DECAYED;
   }
   else if(tend>=simtime-1e-6){
-    stopID = -1;
+    stopID = ID_NOT_FINISH;
   }
   else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fWorldBoundary){
-    stopID = -2;
+    stopID = ID_HIT_BOUNDARIES;
   }
   else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fGeomBoundary ){
-    stopID = 2;
+    stopID = ID_ABSORBED_ON_SURFACE;
   }
   else{
-    stopID = 1;
+    stopID = ID_ABSORBED_IN_MATERIAL;
   }
 
 
@@ -136,7 +136,7 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     if((aTrack->GetStep()->GetPreStepPoint()->GetPolarization())[1]>0) polend=-1;
     else polend=1;
     dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
-    Hend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], zend);
+    Hend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], xend, yend, zend);
     Eend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV;
     Bend = B[3][0];
     Uend = V;
@@ -214,10 +214,10 @@ void UCNTrackingAction::PrintData(){
 
 }
 
-double UCNTrackingAction::Epot(const G4Track* theTrack, double v, double pol, double b, double z){
+double UCNTrackingAction::Epot(const G4Track* theTrack, double v, double pol, double b, double x, double y, double z){
   double epot = 
     (theTrack->GetDefinition()->GetPDGCharge()/coulomb)/ele_e*v
     - pol*(theTrack->GetDefinition()->GetPDGMagneticMoment()/(joule/tesla))/ele_e*b
-    + (theTrack->GetDefinition()->GetPDGMass()/eV/c_0/c_0)*gravconst*z;
+    - (theTrack->GetDefinition()->GetPDGMass()/eV/c_0/c_0)*(gx*x+gy*y+gz*z);
   return epot;
 }

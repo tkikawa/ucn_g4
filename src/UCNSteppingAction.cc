@@ -55,7 +55,7 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
 
   dtc->GetField()->GetCurrentFieldValue(t, x, y, z, B, Ei, V);
   
-  H = theTrack->GetKineticEnergy()/eV + tac->Epot(theTrack, V, polarisation, B[3][0], z);
+  H = theTrack->GetKineticEnergy()/eV + tac->Epot(theTrack, V, polarisation, B[3][0], x, y, z);
   E = theTrack->GetKineticEnergy()/eV;
 
   pre_pol = (theStep->GetPreStepPoint()->GetPolarization())[1];

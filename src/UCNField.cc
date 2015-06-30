@@ -43,10 +43,9 @@ void UCNField::GetFieldValue(const double Point[4],double *fieldArr) const
   fieldArr[3] = Ei[0]*volt/m;   //Ex
   fieldArr[4] = Ei[1]*volt/m;   //Ey
   fieldArr[5] = Ei[2]*volt/m;   //Ez
-  fieldArr[6] = 0;              //gx
-  fieldArr[7] = 0;              //gy
-  fieldArr[8] = -9.81*m/s/s;    //gz
-  //fieldArr[8] = 0;    //gz
+  fieldArr[6] = gx*m/s/s;       //gx
+  fieldArr[7] = gy*m/s/s;       //gy
+  fieldArr[8] = gz*m/s/s;       //gz
   fieldArr[9] = B[0][1]*tesla/m;//dBx/dx
   fieldArr[10]= B[1][1]*tesla/m;//dBy/dx
   fieldArr[11]= B[2][1]*tesla/m;//dBz/dx

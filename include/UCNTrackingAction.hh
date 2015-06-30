@@ -21,7 +21,7 @@ class UCNTrackingAction : public G4UserTrackingAction {
 
   void SnapShotAction(const G4Track*);
   void StepAction(double H, bool Spinflip, bool hit);
-  double Epot(const G4Track* theTrack, double v, double pol, double b, double z);
+  double Epot(const G4Track* theTrack, double v, double pol, double b, double x, double y, double z);
 
 private:
 
