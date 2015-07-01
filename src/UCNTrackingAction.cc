@@ -103,16 +103,6 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   }
   else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fWorldBoundary){
     stopID = ID_HIT_BOUNDARIES;
-  }
-  else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fGeomBoundary ){
-    stopID = ID_ABSORBED_ON_SURFACE;
-  }
-  else{
-    stopID = ID_ABSORBED_IN_MATERIAL;
-  }
-
-
-  if(stopID == -2){
     tend = aTrack->GetStep()->GetPreStepPoint()->GetGlobalTime()/s;
     xend = (aTrack->GetStep()->GetPreStepPoint()->GetPosition()/m)[0];
     yend = (aTrack->GetStep()->GetPreStepPoint()->GetPosition()/m)[1];
@@ -127,6 +117,13 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     Eend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV;
     Bend = B[3][0];
     Uend = V;
+  }
+  else if(aTrack->GetStep()->GetPostStepPoint()->GetStepStatus() == fGeomBoundary ){
+    stopID = ID_ABSORBED_ON_SURFACE;
+    solidend = SolidID(aTrack->GetStep()->GetPostStepPoint()->GetPhysicalVolume()->GetName());
+  }
+  else{
+    stopID = ID_ABSORBED_IN_MATERIAL;
   }
 
   end_t = clock();
