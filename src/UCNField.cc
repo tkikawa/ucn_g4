@@ -1,11 +1,11 @@
-#include "G4SystemOfUnits.hh"
-
-#include "G4Field.hh"
 #include "UCNGlobals.hh"
 #include "UCN2DField.hh"
 #include "UCN3DField.hh"
 #include "UCNConductorField.hh"
 #include "UCNField.hh"
+
+#include "G4Field.hh"
+#include "G4SystemOfUnits.hh"
 
 UCNField::UCNField(std::vector<TField*> FIELDS)
 {
@@ -57,7 +57,7 @@ void UCNField::GetFieldValue(const double Point[4],double *fieldArr) const
   fieldArr[17]= B[2][3]*tesla/m;//dBz/dz
 }
 
-void UCNField::GetCurrentFieldValue(const double t, const double x, const double y, const double z, double B[4][4], double *Ei, double &V)
+void UCNField::GetEMFieldValue(const double t, const double x, const double y, const double z, double B[4][4], double *Ei, double &V)
 {
   for (int k = 0; k < 4; k++)
     for (int j = 0; j < 4; j++)
@@ -69,16 +69,15 @@ void UCNField::GetCurrentFieldValue(const double t, const double x, const double
     (*i)->EField(x, y, z, t, V, Ei);
   }
 
+  // absolute value of B-Vector
+  B[3][0] = sqrt(B[0][0]*B[0][0] + B[1][0]*B[1][0] + B[2][0]*B[2][0]); 
 
-
-  B[3][0] = sqrt(B[0][0]*B[0][0] + B[1][0]*B[1][0] + B[2][0]*B[2][0]); // absolute value of B-Vector
   if (B[3][0]>1e-31)
     {
-      B[3][1] = (B[0][0]*B[0][1] + B[1][0]*B[1][1] + B[2][0]*B[2][1])/B[3][0]; // derivatives of absolute value
+      // derivatives of absolute value
+      B[3][1] = (B[0][0]*B[0][1] + B[1][0]*B[1][1] + B[2][0]*B[2][1])/B[3][0];
       B[3][2] = (B[0][0]*B[0][2] + B[1][0]*B[1][2] + B[2][0]*B[2][2])/B[3][0];
       B[3][3] = (B[0][0]*B[0][3] + B[1][0]*B[1][3] + B[2][0]*B[2][3])/B[3][0];
     }
-
-  
 
 }

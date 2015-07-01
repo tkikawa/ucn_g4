@@ -1,24 +1,20 @@
 #ifndef UCNDetectorConstruction_h
 #define UCNDetectorConstruction_h 1
 
-#include "G4VUserDetectorConstruction.hh"
-#include "globals.hh"
-
-#include "G4UserLimits.hh"
-
-#include "G4Field.hh"
 #include "UCNGlobals.hh"
 #include "UCN2DField.hh"
 #include "UCN3DField.hh"
 #include "UCNConductorField.hh"
 #include "UCNField.hh"
 
-// Open Asset Importer Library //
+#include "G4VUserDetectorConstruction.hh"
+#include "G4UserLimits.hh"
+#include "G4Field.hh"
+#include "G4TessellatedSolid.hh"
+
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
-
-#include "G4TessellatedSolid.hh"
 
 class G4VSolid;
 class G4LogicalVolume;

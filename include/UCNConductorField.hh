@@ -6,7 +6,6 @@
 #ifndef RACETRACK_H_
 #define RACETRACK_H_
 
-//#include "field.h"
 #include "UCNGlobals.hh"
 
 /**

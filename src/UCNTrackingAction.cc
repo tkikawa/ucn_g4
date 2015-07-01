@@ -1,6 +1,6 @@
-#include "G4SystemOfUnits.hh"
-
 #include "UCNTrackingAction.hh"
+
+#include "G4SystemOfUnits.hh"
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
@@ -56,7 +56,7 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   if((aTrack->GetPolarization())[1]>0) polstart=-1;
   else                                 polstart=1;
 
-  dtc->GetField()->GetCurrentFieldValue(tstart, xstart, ystart, zstart, B, Ei, V);
+  dtc->GetField()->GetEMFieldValue(tstart, xstart, ystart, zstart, B, Ei, V);
   Hstart = aTrack->GetKineticEnergy()/eV  + Epot(aTrack, V, polstart, B[3][0], xstart, ystart, zstart);
   Estart = aTrack->GetKineticEnergy()/eV;
   Bstart = B[3][0];
@@ -85,7 +85,7 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   if((aTrack->GetPolarization())[1]>0) polend=-1;
   else                                 polend=1;
 
-  dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
+  dtc->GetField()->GetEMFieldValue(tend, xend, yend, zend, B, Ei, V);
   Hend = aTrack->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], xend, yend, zend);
   Eend = aTrack->GetKineticEnergy()/eV;
   Bend = B[3][0];
@@ -112,7 +112,7 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     vzend = (aTrack->GetStep()->GetPreStepPoint()->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[2];
     if((aTrack->GetStep()->GetPreStepPoint()->GetPolarization())[1]>0) polend=-1;
     else polend=1;
-    dtc->GetField()->GetCurrentFieldValue(tend, xend, yend, zend, B, Ei, V);
+    dtc->GetField()->GetEMFieldValue(tend, xend, yend, zend, B, Ei, V);
     Hend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], xend, yend, zend);
     Eend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV;
     Bend = B[3][0];

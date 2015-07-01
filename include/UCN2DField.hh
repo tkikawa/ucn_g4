@@ -10,7 +10,6 @@
 
 #include "interpolation.h"
 
-//#include "field.h"
 #include "UCNGlobals.hh"
 
 /**

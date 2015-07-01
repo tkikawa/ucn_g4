@@ -1,6 +1,6 @@
-#include "G4SystemOfUnits.hh"
-
 #include "UCNSteppingAction.hh"
+
+#include "G4SystemOfUnits.hh"
 #include "G4SteppingManager.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
@@ -53,7 +53,7 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   if((theTrack->GetPolarization())[1]>0) polarisation=-1;
   else                                   polarisation=1;
 
-  dtc->GetField()->GetCurrentFieldValue(t, x, y, z, B, Ei, V);
+  dtc->GetField()->GetEMFieldValue(t, x, y, z, B, Ei, V);
   
   H = theTrack->GetKineticEnergy()/eV + tac->Epot(theTrack, V, polarisation, B[3][0], x, y, z);
   E = theTrack->GetKineticEnergy()/eV;

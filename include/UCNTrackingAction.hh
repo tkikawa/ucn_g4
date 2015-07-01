@@ -1,10 +1,10 @@
 #ifndef UCNTrackingAction_h
 #define UCNTrackingAction_h 1
 
+#include "UCNDetectorConstruction.hh"
+
 #include "G4UserTrackingAction.hh"
 #include "G4RunManager.hh"
-
-#include "UCNDetectorConstruction.hh"
 
 #include <fstream>
 #include <sys/time.h>

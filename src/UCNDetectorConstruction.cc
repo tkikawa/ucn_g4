@@ -2,37 +2,25 @@
 #include <sstream>
 #include <string>
 
-// USER //
 #include "UCNDetectorConstruction.hh"
-
-// LoadCAD //
-#include "G4TessellatedSolid.hh"
-#include "G4TriangularFacet.hh"
-
-// GEANT4 //
-#include "G4Material.hh"
-#include "G4NistManager.hh"
-#include "G4UCNMaterialPropertiesTable.hh"
-
-// For field //
-#include "G4Field.hh"
 #include "UCNGlobals.hh"
 #include "UCN2DField.hh"
 #include "UCN3DField.hh"
 #include "UCNConductorField.hh"
 #include "UCNField.hh"
 
+#include "G4TessellatedSolid.hh"
+#include "G4TriangularFacet.hh"
+#include "G4Material.hh"
+#include "G4NistManager.hh"
+#include "G4UCNMaterialPropertiesTable.hh"
+#include "G4Field.hh"
 #include "G4Box.hh"
 //#include "G4Tubs.hh"
 #include "G4UnionSolid.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
-
-//#include "G4GeometryManager.hh"
-//#include "G4PhysicalVolumeStore.hh"
-//#include "G4LogicalVolumeStore.hh"
-//#include "G4SolidStore.hh"
 
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
@@ -389,7 +377,7 @@ G4VSolid* UCNDetectorConstruction::LoadCAD(char* file_name){
   for(unsigned int i=0; i < aim->mNumFaces; i++)
     {
       const aiFace& face = aim->mFaces[i];
-
+      
       point_1.setX(aim->mVertices[face.mIndices[0]].x * m);
       point_1.setY(aim->mVertices[face.mIndices[0]].y * m);
       point_1.setZ(aim->mVertices[face.mIndices[0]].z * m);
@@ -406,9 +394,9 @@ G4VSolid* UCNDetectorConstruction::LoadCAD(char* file_name){
       facet = new G4TriangularFacet(point_1, point_2, point_3, ABSOLUTE);
       volume_solid->AddFacet((G4VFacet*) facet);
     }
-
+  
   volume_solid->SetSolidClosed(true);
-
+  
   if (volume_solid->GetNumberOfFacets() == 0) {
     G4cerr << "LoadCAD: "
 	   << "Load a mesh has 0 faces, " << file_name << " may not exist."

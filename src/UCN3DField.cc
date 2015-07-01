@@ -8,9 +8,9 @@
 #include <cmath>
 
 #include "interpolation.h"
+#include "tricubic.h"
 
 #include "UCN3DField.hh"
-#include "tricubic.h"
 #include "UCNGlobals.hh"
 
 using namespace std;
