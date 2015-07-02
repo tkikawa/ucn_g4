@@ -9,6 +9,7 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
+#include "G4GeometryTolerance.hh"
 
 UCNSteppingAction::UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON, UCNTrackingAction* TAC, UCNDetectorConstruction* DTC, const bool *LOGINFO, double TRKLOGINT, const std::vector<double> &SNAPTIME)
 {
@@ -42,6 +43,8 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   // check if it is primary
   if(theTrack->GetParentID()!=0&&!secondaries) { return; }
 
+  if(theStep->GetStepLength()<=G4GeometryTolerance::GetInstance()->GetSurfaceTolerance()/2){ return; }
+
   particle = runman->GetCurrentEvent()->GetEventID();
   t = theTrack->GetGlobalTime()/s;
   x = (theTrack->GetPosition()/m)[0];
@@ -64,7 +67,7 @@ void UCNSteppingAction::UserSteppingAction(const G4Step * theStep)
   post_phys_name = theStep->GetPostStepPoint()->GetPhysicalVolume()->GetName();
   if(pre_pol*post_pol<0) Spinflip = true;
   else Spinflip = false;
-  if(pre_phys_name == "World" && post_phys_name != "World") hit = true;
+  if(pre_phys_name != post_phys_name) hit = true;
   else hit = false;
   tac->StepAction(H, Spinflip, hit);
 

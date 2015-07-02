@@ -53,8 +53,8 @@ void UCNTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   vxstart = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[0];
   vystart = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[1];
   vzstart = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[2];
-  if((aTrack->GetPolarization())[1]>0) polstart=-1;
-  else                                 polstart=1;
+  if((aTrack->GetPolarization())[1]>0) polstart = -1;
+  else                                 polstart = 1;
 
   dtc->GetField()->GetEMFieldValue(tstart, xstart, ystart, zstart, B, Ei, V);
   Hstart = aTrack->GetKineticEnergy()/eV  + Epot(aTrack, V, polstart, B[3][0], xstart, ystart, zstart);
@@ -82,8 +82,8 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
   vxend = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[0];
   vyend = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[1];
   vzend = (aTrack->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[2];
-  if((aTrack->GetPolarization())[1]>0) polend=-1;
-  else                                 polend=1;
+  if((aTrack->GetPolarization())[1]>0) polend = -1;
+  else                                 polend = 1;
 
   dtc->GetField()->GetEMFieldValue(tend, xend, yend, zend, B, Ei, V);
   Hend = aTrack->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], xend, yend, zend);
@@ -110,8 +110,8 @@ void UCNTrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     vxend = (aTrack->GetStep()->GetPreStepPoint()->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[0];
     vyend = (aTrack->GetStep()->GetPreStepPoint()->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[1];
     vzend = (aTrack->GetStep()->GetPreStepPoint()->GetVelocity()/(m/s))*(aTrack->GetMomentumDirection())[2];
-    if((aTrack->GetStep()->GetPreStepPoint()->GetPolarization())[1]>0) polend=-1;
-    else polend=1;
+    if((aTrack->GetStep()->GetPreStepPoint()->GetPolarization())[1]>0) polend = -1;
+    else polend = 1;
     dtc->GetField()->GetEMFieldValue(tend, xend, yend, zend, B, Ei, V);
     Hend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV + Epot(aTrack, V, polend, B[3][0], xend, yend, zend);
     Eend = aTrack->GetStep()->GetPreStepPoint()->GetKineticEnergy()/eV;
@@ -193,7 +193,8 @@ void UCNTrackingAction::PrintData(){
 			<< polstart << " " << Hstart << " " << Estart << " "<< Bstart << " "<< Ustart << " "<< solidstart << " "
 			<< tend << " " << xend << " " << yend << " " << zend << " "
 			<< vxend << " " << vyend << " " << vzend << " "
-			<< polend << " " << Hend << " " << Eend << " " << Bend << " "<< Uend << " "<< solidend << " " << stopID << " " << NSpinflip << " " << spinflipprob << " "
+			<< polend << " " << Hend << " " << Eend << " " << Bend << " "<< Uend << " "<< solidend << " "
+			<< stopID << " " << NSpinflip << " " << spinflipprob << " "
 			<< ComputingTime << " " << Nhit << " " << Nstep << " " << trajlength << " " << Hmax << '\n';
 
 }
@@ -203,6 +204,11 @@ double UCNTrackingAction::Epot(const G4Track* theTrack, double v, double pol, do
     (theTrack->GetDefinition()->GetPDGCharge()/coulomb)/ele_e*v
     - pol*(theTrack->GetDefinition()->GetPDGMagneticMoment()/(joule/tesla))/ele_e*b
     - (theTrack->GetDefinition()->GetPDGMass()/eV/c_0/c_0)*(gx*x+gy*y+gz*z);
+  
+  if(theTrack->GetVolume()->GetLogicalVolume()->GetMaterial()->GetMaterialPropertiesTable()){
+    epot += (theTrack->GetVolume()->GetLogicalVolume()->GetMaterial()->GetMaterialPropertiesTable()->GetConstProperty("FERMIPOT"))*1e-9;
+  }
+  
   return epot;
 }
 
@@ -216,5 +222,3 @@ int UCNTrackingAction::SolidID(G4String phys_name){
     return 1;
   }
 }
-
-
