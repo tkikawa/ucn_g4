@@ -1,6 +1,7 @@
 /********************************************/
 /*                                          */
 /*  GEANT4 simulation code for TRIUMF UCN   */
+/*  Author: Tatsuya Kikawa                  */
 /*                                          */
 /********************************************/
 
@@ -19,7 +20,7 @@
 #include <iomanip>
 #include <numeric>
 #include <time.h>
-
+#include <sys/time.h>
 
 #include "UCNPhysicsList.hh"
 #include "UCNDetectorConstruction.hh"
@@ -75,7 +76,7 @@ int main(int argc,char** argv)
 
   std::string outpath = "./out";
   std::string inpath  = "./in";
-  int jobnumber = 0;
+  long jobnumber = 0;
   bool jobseed = false;
 
   int c = -1;
@@ -118,9 +119,8 @@ int main(int argc,char** argv)
     op++;
   }
 
-  time_t start_time, end_time, time_diff;
-  struct tm *t_st;
-  time(&start_time);
+  struct timeval  start_time, end_time;
+  gettimeofday(&start_time, NULL);
 
   TConfig configin;
   ReadInFile(std::string(inpath + "/config.in").c_str(), configin);
@@ -169,8 +169,8 @@ int main(int argc,char** argv)
 
   // Seed the random number generator manually
   long seed;
-  if(jobseed) seed = long(jobnumber);
-  else        seed = long(start_time);
+  if(jobseed) seed = jobnumber;
+  else        seed = (long) start_time.tv_sec*1000000 + start_time.tv_usec;
   G4Random::setTheSeed(seed);
 
   // Set mandatory initialization classes
@@ -220,10 +220,9 @@ int main(int argc,char** argv)
 #endif
   delete runManager;
 
-  time(&end_time);
-  time_diff = difftime(end_time, start_time);
-  t_st = gmtime(&time_diff);
-  G4cout << "Simulation time: "<< 24*(t_st->tm_mday-1) + t_st->tm_hour <<"h"<< t_st->tm_min <<"m"<< t_st->tm_sec <<"s"<< G4endl;
+  gettimeofday(&end_time, NULL);
+  float time_diff = end_time.tv_sec - start_time.tv_sec + (float)(end_time.tv_usec - start_time.tv_usec)/1e6;
+  G4cout << "Simulation time: "<< std::setprecision(4) << time_diff <<" sec."<< G4endl;
   G4cout << "All finished. \\(^o^)/" << G4endl;
 
   return 0;
