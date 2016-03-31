@@ -43,8 +43,7 @@ static const long double Econv = 1e2; ///< electric field conversion factor cgs 
 // gravity
 static const long double gx = 0;
 static const long double gy = 0;
-//static const long double gz = -gravconst;
-static const long double gz = 0;
+static const long double gz = -gravconst;
 
 
 /**
