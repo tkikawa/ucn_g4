@@ -11,7 +11,7 @@
 #include "G4ParticleTypes.hh"
 #include "G4GeometryTolerance.hh"
 
-UCNSteppingAction::UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON, UCNTrackingAction* TAC, UCNDetectorConstruction* DTC, const bool *LOGINFO, double TRKLOGINT, const std::vector<double> &SNAPTIME)
+UCNSteppingAction::UCNSteppingAction(unsigned long long int JOBNUM, std::string OUTPATH, int SECON, UCNTrackingAction* TAC, UCNDetectorConstruction* DTC, const bool *LOGINFO, double TRKLOGINT, const std::vector<double> &SNAPTIME)
 {
   secondaries=SECON;
   jobnumber=JOBNUM;

@@ -12,14 +12,14 @@ class UCNActionInitialization : public G4VUserActionInitialization
 {
 public:
 
-  UCNActionInitialization(int JOBNUM, std::string OUTPATH, int SECON, TConfig GEOMIN, TConfig PARIN, UCNDetectorConstruction* DTC);
+  UCNActionInitialization(unsigned long long int JOBNUM, std::string OUTPATH, int SECON, TConfig GEOMIN, TConfig PARIN, UCNDetectorConstruction* DTC);
   virtual ~UCNActionInitialization();  
   virtual void BuildForMaster() const;
   virtual void Build() const;
   
 private:
 
-  int jobnumber;
+  unsigned long long int jobnumber;
   std::string outpath;
   TConfig particlein;
   TConfig geometryin;

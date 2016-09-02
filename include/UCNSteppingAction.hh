@@ -13,7 +13,7 @@ class UCNSteppingAction : public G4UserSteppingAction
 {
   public:
 
-  UCNSteppingAction(int JOBNUM, std::string OUTPATH, int SECON, UCNTrackingAction* TAC, UCNDetectorConstruction* DTC, const bool *LOGINFO, double TRKLOGINT, const std::vector<double> &SNAPTIME);
+  UCNSteppingAction(unsigned long long int JOBNUM, std::string OUTPATH, int SECON, UCNTrackingAction* TAC, UCNDetectorConstruction* DTC, const bool *LOGINFO, double TRKLOGINT, const std::vector<double> &SNAPTIME);
     virtual ~UCNSteppingAction();
 
     virtual void UserSteppingAction(const G4Step*);
@@ -25,7 +25,7 @@ private:
   std::ofstream hitfile[3];
   int pid;
   int secondaries;
-  int jobnumber;
+  unsigned long long int jobnumber;
   std::string outpath;
   std::string name;
   int particle, polarisation;

@@ -6,7 +6,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-UCNActionInitialization::UCNActionInitialization(int JOBNUM, std::string OUTPATH, int SECON, TConfig GEOMIN, TConfig PARTIN, UCNDetectorConstruction* DTC)
+UCNActionInitialization::UCNActionInitialization(unsigned long long int JOBNUM, std::string OUTPATH, int SECON, TConfig GEOMIN, TConfig PARTIN, UCNDetectorConstruction* DTC)
  : G4VUserActionInitialization()
 {
   jobnumber=JOBNUM;

@@ -13,7 +13,7 @@ class UCNTrackingAction : public G4UserTrackingAction {
 
   public:
   
-  UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON, UCNDetectorConstruction* DTC, bool ENDLOG);
+  UCNTrackingAction(unsigned long long int JOBNUM, std::string OUTPATH, int SECON, UCNDetectorConstruction* DTC, bool ENDLOG);
   virtual ~UCNTrackingAction();
    
   virtual void PreUserTrackingAction(const G4Track*);
@@ -32,7 +32,7 @@ private:
   bool issnapshot;
   bool endlog;
   int secondaries;
-  int jobnumber;
+  unsigned long long int jobnumber;
   std::string outpath;
   std::string name;
   double simtime;
