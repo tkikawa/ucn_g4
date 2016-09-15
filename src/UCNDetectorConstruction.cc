@@ -48,7 +48,7 @@ UCNDetectorConstruction::UCNDetectorConstruction(double SIMTIME, TConfig GEOMIN)
   geometryin=GEOMIN;
   DefineMaterials();
   ReadInField(geometryin);
-  g4limit = new G4UserLimits(DBL_MAX,DBL_MAX,SIMTIME*s);
+  g4limit = new G4UserLimits(1.0*mm,DBL_MAX,SIMTIME*s);
   simtime=SIMTIME;
   fieldIsInitialized = false;
 }
@@ -165,6 +165,25 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
 
   G4VisAttributes* VA = new G4VisAttributes(G4Color(0.8,0.8,0.8));
   VA->SetForceSolid(true);
+/*
+  G4RotationMatrix *rot = new G4RotationMatrix(CLHEP::HepRotationX(90*deg));
+
+  G4Tubs *solidGuide = new G4Tubs("Tube", 0.0425*m, 0.05*m, 3*m, 0*deg, 360*deg);
+  G4LogicalVolume *logicalGuide = new G4LogicalVolume(solidGuide, ucn_material[1], "TubeTube_10");
+  G4VPhysicalVolume *physicalGuide = new G4PVPlacement(rot, G4ThreeVector(0,3*m,0), logicalGuide, "TubeTube_10", logicWorld, false, 0);
+
+  G4Tubs *solidCap = new G4Tubs("Cap", 0, 0.0425*m, 0.01*m, 0*deg, 360*deg);
+  G4LogicalVolume *logicalCap = new G4LogicalVolume(solidCap, ucn_material[1], "CapCapCap2");
+  G4VPhysicalVolume *physicalCap = new G4PVPlacement(rot, G4ThreeVector(0,0,0), logicalCap, "CapCapCap10", logicWorld, false, 0);
+
+  G4Tubs *solidFoil = new G4Tubs("Foil", 0, 0.0425*m, 0.0005*m, 0*deg, 360*deg); // 10x thickness
+  G4LogicalVolume *logicalFoil = new G4LogicalVolume(solidFoil, ucn_material[0], "FoilFoil_3");
+  G4VPhysicalVolume *physicalFoil = new G4PVPlacement(rot, G4ThreeVector(0,4*m,0), logicalFoil, "FoilFoil_3", logicWorld, false, 0);
+
+  G4Tubs *solidAbs = new G4Tubs("Absorber", 0, 0.0425*m, 0.01*m, 0*deg, 360*deg);
+  G4LogicalVolume *logicalAbs = new G4LogicalVolume(solidAbs, ucn_material[2], "Absorber_4");
+  G4VPhysicalVolume *physicalAbs = new G4PVPlacement(rot, G4ThreeVector(0,6*m,0), logicalAbs, "Absorber_2", logicWorld, false, 0);
+*/
 
   for (std::map<std::string, std::string>::iterator i = geometryin["GEOMETRY"].begin(); i != geometryin["GEOMETRY"].end(); i++){ // parse STLfile list
     std::istringstream(i->first) >> ID;
@@ -179,31 +198,31 @@ G4VPhysicalVolume* UCNDetectorConstruction::Construct()
     ss >> STLfile >> matname;
     if (ss){
       for (unsigned j = 0; j < materials.size(); j++){
-	if (STLfile == "igunored" ||STLfile == "Igunored")break;
-	if (matname == "default" ||matname == "Default")break;
-	if (matname == materials[j]){
-	  mid=j;
-	  if (ID > 1){
-	    std::cout<<"Reading: "<<STLfile<<std::endl;
-	    cad_solid[icad] = LoadCAD((char*)STLfile.c_str());
-	    sprintf(solid_name,"solid_%d",ID);
-	    cad_union[icad] = new G4UnionSolid(solid_name, cad_solid[icad], btmp, 0, G4ThreeVector(5*m, 5*m, 5*m));
-	    sprintf(logical_name,"logical_%d",ID);
-	    cad_logical[icad] = new G4LogicalVolume(cad_union[icad], ucn_material[j], logical_name, 0, 0, 0);
-	    cad_logical[icad]->SetUserLimits(g4limit);
-	    cad_logical[icad]->SetVisAttributes(VA);
-	    sprintf(physical_name,"physical_%d",ID);
-	    cad_physical[icad] = new G4PVPlacement(0, G4ThreeVector(), cad_logical[icad], physical_name, logicWorld, false, 0);
-	    icad++;
+		if (STLfile == "igunored" ||STLfile == "Igunored")break;
+		if (matname == "default" ||matname == "Default")break;
+		if (matname == materials[j]){
+		  mid=j;
+		  if (ID > 1){
+			std::cout<<"Reading: "<<STLfile<<std::endl;
+			cad_solid[icad] = LoadCAD((char*)STLfile.c_str());
+			sprintf(solid_name,"solid_%d",ID);
+			cad_union[icad] = new G4UnionSolid(solid_name, cad_solid[icad], btmp, 0, G4ThreeVector(5*m, 5*m, 5*m));
+			sprintf(logical_name,"logical_%d",ID);
+			cad_logical[icad] = new G4LogicalVolume(cad_union[icad], ucn_material[j], logical_name, 0, 0, 0);
+			cad_logical[icad]->SetUserLimits(g4limit);
+			cad_logical[icad]->SetVisAttributes(VA);
+			sprintf(physical_name,"physical_%d",ID);
+			cad_physical[icad] = new G4PVPlacement(0, G4ThreeVector(), cad_logical[icad], physical_name, logicWorld, false, 0);
+			icad++;
 
 
-	  }
-	  break;
-	}
-	else if (j+1 == materials.size()){
-	  printf("Material %s used for %s but not defined in geometry.in!\n",matname.c_str(), STLfile.c_str());
-	  exit(-1);
-	}
+		  }
+		  break;
+		}
+		else if (j+1 == materials.size()){
+		  printf("Material %s used for %s but not defined in geometry.in!\n",matname.c_str(), STLfile.c_str());
+		  exit(-1);
+		}
       }
     }
     else{
@@ -247,7 +266,7 @@ void UCNDetectorConstruction::ConstructSDandField()
     fField = new UCNField(fields);
     fField->SetGravityActive(true);
 
-    G4RepleteEofM* equation = new G4RepleteEofM(fField);
+    G4RepleteEofM* equation = new G4RepleteEofM(fField, 12);
     equation->SetBField();
     equation->SetEField();
     equation->SetgradB();
