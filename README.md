@@ -4,8 +4,7 @@ UCN simulation code with GEANT4
 This is the Monte Calro simulation code of UCN (ultra-cold neutron) with GEANT4 developed for [the TRIUMF UCN experiment](http://www.triumf.ca/ucn). It has functions equivalent to [PENTrack](https://github.com/wschreyer/PENTrack) and intput and output format is the same as PENTrack.
 
 
-# 1. External libraries
------------
+## 1. External libraries
 
 ### GEANT4
 
@@ -32,8 +31,7 @@ has been tested.
 [Lekien and Marsden](http://dx.doi.org/10.1002/nme.1296) developed a tricubic interpolation method in three dimensions. It is included in the repository.
 
 
-# 2. Installation
-------------------
+## 2. Installation
 
 For the installtion, [cmake](http://www.cmake.org/) is used. The cmake version newer than 2.8 must be used. (cmake v.2.6 is normally installed in Scientific Linux 6.)
 
@@ -76,8 +74,7 @@ For the installtion, [cmake](http://www.cmake.org/) is used. The cmake version n
 - make  
 
 
-# 3. Run the simulation
-------------------
+## 3. Run the simulation
 
 ### Usage
 - UCNsim {jobnumber} {path/to/in/files} {path/to/out/files} [options]
@@ -88,8 +85,7 @@ For the installtion, [cmake](http://www.cmake.org/) is used. The cmake version n
 - -s : use the jobnumber as the seed
 - -t : set the number of threads
 
-# 4. Defining your experiment
-------------------------
+## 4. Defining your experiment
 
 ### Geometry
 
@@ -120,8 +116,7 @@ Particle sources can be defined using STL files or manual parameter ranges. Part
 
 
 
-# 5. Output
--------
+## 5. Output
 
 Output files are separated by particle type, (e.g. electron, neutron and proton) and type of output (endlog, tracklog, ...). Output files are only created if particles of the specific type are simulated and can also be completely disabled for each particle type individually by adding corresponding variables in 'particle.in'. All output files are tables with space separated columns; the first line contains the column name.
 
