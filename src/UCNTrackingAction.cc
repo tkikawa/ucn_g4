@@ -13,7 +13,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-UCNTrackingAction::UCNTrackingAction(int JOBNUM, std::string OUTPATH, int SECON, UCNDetectorConstruction* DTC, bool ENDLOG)
+UCNTrackingAction::UCNTrackingAction(unsigned long long int JOBNUM, std::string OUTPATH, int SECON, UCNDetectorConstruction* DTC, bool ENDLOG)
 {
   secondaries=SECON;
   jobnumber=JOBNUM;

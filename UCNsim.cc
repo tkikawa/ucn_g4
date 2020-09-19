@@ -76,7 +76,7 @@ int main(int argc,char** argv)
 
   std::string outpath = "./out";
   std::string inpath  = "./in";
-  long jobnumber = 0;
+  unsigned long long int jobnumber = 0;
   bool jobseed = false;
 
   int c = -1;
@@ -103,7 +103,7 @@ int main(int argc,char** argv)
   while (optind < argc){
     switch(op){
     case 0:
-      jobnumber = atoi(argv[optind++]);
+      std::istringstream(argv[optind++]) >> jobnumber;
       break;
     case 1:
       inpath = argv[optind++];

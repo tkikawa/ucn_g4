@@ -48,9 +48,9 @@ void UCNPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   particleEnergy = Spectrum(ParticleName) * eV;
   fParticleGun->SetParticleEnergy(particleEnergy);
   AngularDist(ParticleName, phi, theta);
-  pz = std::sin(theta)*std::cos(phi);
-  px = std::sin(theta)*std::sin(phi);
-  py = std::cos(theta);  
+  px = std::sin(theta)*std::cos(phi);
+  py = std::sin(theta)*std::sin(phi);
+  pz = std::cos(theta);  
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }
